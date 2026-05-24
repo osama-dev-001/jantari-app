@@ -4,6 +4,7 @@ import { FlexWidget, TextWidget } from 'react-native-android-widget';
 export function JantariWidget({ city, currentSalah, nextSalah, nextTime, countdown }) {
   return (
     <FlexWidget
+      clickAction="OPEN_APP"
       style={{
         height: 'match_parent',
         width: 'match_parent',
@@ -15,10 +16,26 @@ export function JantariWidget({ city, currentSalah, nextSalah, nextTime, countdo
         padding: 12,
       }}
     >
-      <TextWidget
-        text={city.toUpperCase()}
-        style={{ fontSize: 10, color: '#6b7280', fontFamily: 'sans-serif-medium', letterSpacing: 1 }}
-      />
+      {/* Top row: city + refresh icon */}
+      <FlexWidget
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          width: 'match_parent',
+        }}
+      >
+        <TextWidget
+          text={city.toUpperCase()}
+          style={{ fontSize: 10, color: '#6b7280', fontFamily: 'sans-serif-medium', letterSpacing: 1 }}
+        />
+        <TextWidget
+          text="↻"
+          clickAction="REFRESH_WIDGET"
+          clickActionData={{ action: 'refresh' }}
+          style={{ fontSize: 16, color: '#6b7280', fontFamily: 'sans-serif-medium' }}
+        />
+      </FlexWidget>
 
       <TextWidget
         text={nextSalah}
