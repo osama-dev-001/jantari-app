@@ -23,5 +23,21 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
       </activity>
+	  <receiver
+    android:name=".widget.Jantari"
+    android:exported="true"
+    android:label="Jantari Widget">
+    <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+    </intent-filter>
+    <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/jantari_widget_info" />
+</receiver>
+
+<service
+    android:name="com.reactnativeandroidwidget.RNWidgetBackgroundTaskService"
+    android:permission="android.permission.BIND_JOB_SERVICE"
+    android:exported="false" />
     </application>
 </manifest>
