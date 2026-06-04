@@ -1,5 +1,4 @@
 export const amdData = {
-	// ... your existing object, unchanged
 	"January": [
 		{ "Date": "01","Fajr": "05:56 AM","Sunrise": "07:20 AM","Dhuhr": "12:43 PM","Asr": "03:45 PM","Maghrib": "06:05 PM","Isha": "07:25 PM","Midnight": "12:01 AM" },
 		{ "Date": "02","Fajr": "05:56 AM","Sunrise": "07:21 AM","Dhuhr": "12:43 PM","Asr": "03:45 PM","Maghrib": "06:06 PM","Isha": "07:26 PM","Midnight": "12:01 AM" },

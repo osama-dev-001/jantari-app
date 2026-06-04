@@ -1,5 +1,4 @@
 export const vnsData = {
-	// ... your existing object, unchanged
 	"January": [
 		{ "Date": "01", "Fajr": "05:23 AM", "Sunrise": "06:45 AM", "Zawal": "11:21 AM", "Dhuhr": "12:01 PM", "Asr": "02:59 PM", "Maghrib": "05:19 PM", "Isha": "06:40 PM", "Midnight": "11:21 PM" },
 		{ "Date": "02", "Fajr": "05:23 AM", "Sunrise": "06:45 AM", "Zawal": "11:21 AM", "Dhuhr": "12:02 PM", "Asr": "03:00 PM", "Maghrib": "05:19 PM", "Isha": "06:41 PM", "Midnight": "11:21 PM" },
