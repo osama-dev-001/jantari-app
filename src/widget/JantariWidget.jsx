@@ -8,49 +8,50 @@ export function JantariWidget({ city, currentSalah, nextSalah, nextTime, countdo
       style={{
         height: 'match_parent',
         width: 'match_parent',
-        flexDirection: 'column',
+        flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        backgroundColor: '#0f1923',
+        alignItems: 'center',
+        backgroundColor: '#1a0f2e',
         borderRadius: 16,
-        padding: 12,
+        padding: 14,
       }}
     >
-      {/* Top row: city + refresh icon */}
+      {/* Left — Current Salah */}
       <FlexWidget
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: 'match_parent',
-        }}
+        style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}
       >
         <TextWidget
           text={city.toUpperCase()}
-          style={{ fontSize: 10, color: '#6b7280', fontFamily: 'sans-serif-medium', letterSpacing: 1 }}
+          style={{ fontSize: 9, color: '#6b7280', fontFamily: 'sans-serif-medium', letterSpacing: 1 }}
         />
         <TextWidget
-          text="↻"
-          clickAction="REFRESH_WIDGET"
-          clickActionData={{ action: 'refresh' }}
-          style={{ fontSize: 16, color: '#6b7280', fontFamily: 'sans-serif-medium' }}
+          text={currentSalah || '—'}
+          style={{ fontSize: 22, color: '#a78bfa', fontFamily: 'sans-serif-medium' }}
         />
       </FlexWidget>
 
-      <TextWidget
-        text={nextSalah}
-        style={{ fontSize: 18, color: '#ffffff', fontFamily: 'sans-serif-medium' }}
+      {/* Divider */}
+      <FlexWidget
+        style={{
+          width: 1, height: 'match_parent',
+          backgroundColor: '#3b1f6e',
+          marginHorizontal: 10,
+        }}
       />
 
-      <TextWidget
-        text={nextTime}
-        style={{ fontSize: 13, color: '#a78bfa', fontFamily: 'sans-serif' }}
-      />
-
-      <TextWidget
-        text={countdown}
-        style={{ fontSize: 12, color: '#34d399', fontFamily: 'sans-serif-medium' }}
-      />
+      {/* Right — Countdown only */}
+      <FlexWidget
+        style={{ flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}
+      >
+        <TextWidget
+          text="NEXT"
+          style={{ fontSize: 9, color: '#6b7280', fontFamily: 'sans-serif-medium', letterSpacing: 2 }}
+        />
+        <TextWidget
+          text={countdown}
+          style={{ fontSize: 16, color: '#34d399', fontFamily: 'sans-serif-medium' }}
+        />
+      </FlexWidget>
     </FlexWidget>
   );
 }

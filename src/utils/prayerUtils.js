@@ -1,4 +1,4 @@
-const PRAYERS = ['Fajr', 'Dhuhr', 'Zawal', 'Asr', 'Maghrib', 'Isha', 'Midnight'];
+const PRAYERS = ['Fajr', 'Sunrise', 'Zawal', 'Dhuhr', 'Asr', 'Maghrib', 'Isha', 'Midnight'];
 
 
 /**
@@ -38,7 +38,6 @@ export function getCurrentAndNext(timings) {
 			timeStr: timings[name],
 			time: parseTime(timings[name]),
 		}));
-	console.log('prayers: ', prayers)
 
 	const nextIndex = prayers.findIndex(p => p.time > now);
 
