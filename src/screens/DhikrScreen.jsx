@@ -139,12 +139,12 @@ export default function DhikrScreen({ navigation }) {
             <Text style={s.emptyText}>No adhkar added yet</Text>
           </View>
         ) : (
-          list.map(item => (
+          list.map((item, idx) => (
             <DhikrCard
               key={item.id}
               item={item}
               count={counts[item.id] || 0}
-              onPress={item => navigation.navigate('DhikrDetail', { item })}
+              onPress={() => navigation.navigate('DhikrDetail', { items: list, index: idx })}
             />
           ))
         )}
@@ -182,8 +182,8 @@ const s = StyleSheet.create({
     marginBottom: 12, overflow: 'hidden',
   },
   cardDone: { backgroundColor: '#0d1f1a' },
-  progressTrack: { height: 2, backgroundColor: '#0f1923' },
-  progressFill: { height: 2, backgroundColor: '#6d28d9', borderRadius: 1 },
+  progressTrack: { height: 3, backgroundColor: 'rgba(255,255,255,0.06)' },
+  progressFill: { height: 3, backgroundColor: '#6d28d9', borderRadius: 2 },
   progressDone: { backgroundColor: '#34d399' },
   cardTop: {
     flexDirection: 'row', justifyContent: 'space-between',
