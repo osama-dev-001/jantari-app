@@ -94,6 +94,10 @@ android {
         }
     }
     buildTypes {
+		debug {
+			applicationIdSuffix ".dev"
+			resValue "string", "app_name", "Jantari Dev"
+		}
         release {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
