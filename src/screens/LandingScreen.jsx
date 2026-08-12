@@ -36,7 +36,7 @@ export default function LandingScreen({ navigation }) {
       {/* App title */}
       <View style={s.header}>
         <Text style={s.title}>Digital Jantari</Text>
-        <Text style={s.subtitle}>رمضان مبارک</Text>
+        {/* <Text style={s.subtitle}>رمضان مبارک</Text> */}
       </View>
 
       {/* Section cards */}
