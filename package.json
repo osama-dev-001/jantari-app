@@ -15,6 +15,7 @@
     "@react-navigation/bottom-tabs": "^7.16.1",
     "@react-navigation/native": "^7.2.5",
     "@react-navigation/stack": "^7.9.3",
+    "adhan": "^4.4.4",
     "react": "19.2.3",
     "react-native": "0.85.3",
     "react-native-android-widget": "^0.20.3",

@@ -1,16 +1,19 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import {
 	View, Text, StyleSheet,
 	TouchableOpacity, StatusBar, ScrollView,
-	Modal, FlatList, SectionList,
+	Modal, FlatList, InteractionManager, ActivityIndicator, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { vnsData } from '../data/vns';
 import { amdData } from '../data/amd';
+import { ADHAN_CITIES } from '../data/cities';
+import { calcYearTimings } from '../utils/adhanCalc';
 import { resolveTimings } from '../utils/api';
 import { getCurrentAndNext, getCountdown } from '../utils/prayerUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { JantariWidget } from '../widget/JantariWidget';
+import { buildWidgetModel } from '../widget/widgetData';
 import { requestWidgetUpdate } from 'react-native-android-widget';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -21,6 +24,7 @@ const TABLE_COLS = ['Fajr', 'Sunrise', 'Zawal', 'Dhuhr', 'Asr', 'Maghrib', 'Isha
 const CITIES = [
 	{ key: 'vns', label: 'Varanasi' },
 	{ key: 'amd', label: 'Ahmedabad' },
+	...ADHAN_CITIES,
 ];
 
 const MONTHS = [
@@ -36,12 +40,16 @@ const QUARTERS = {
 	q4: MONTHS.slice(9, 12),
 };
 
-const staticDataMap = { vns: vnsData, amd: amdData };
+const adhanDataMap = Object.fromEntries(
+	ADHAN_CITIES.map(city => [city.key, calcYearTimings(city)])
+);
+
+const staticDataMap = { vns: vnsData, amd: amdData, ...adhanDataMap };
 
 // ─── Yearly View ─────────────────────────────────────────────────────────────
 const COL_EMOJIS = {
 	Date: '📅', Fajr: '🌌', Sunrise: '🌅', Zawal: '☀️',
-	Dhuhr: '🌤️', Asr: '😊', Maghrib: '🌆', Isha: '🌙', Midnight: '✨',
+	Dhuhr: '🌤️', Asr: '🌞', Maghrib: '🌆', Isha: '🌙', Midnight: '✨',
 };
 
 const COL_COLORS = {
@@ -63,15 +71,75 @@ const ROW_GLOW_COLORS = [
 	'rgba(91, 33, 182, 0.5)',    // deep purple
 ];
 
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+
 function YearlyView({ cityKey }) {
-	const [quarter, setQuarter] = useState('all');
+	const [quarter, setQuarter] = useState('all');       // drives data (FlatList)
+	const [displayQuarter, setDisplayQuarter] = useState('all'); // drives button highlight instantly
+	const [ready, setReady] = useState(false);
+	// Initial estimate so FlatList has a bounded height before onLayout fires
+	const [tableHeight, setTableHeight] = useState(Math.round(SCREEN_HEIGHT * 0.55));
 	const data = staticDataMap[cityKey];
 
 	const today = new Date();
 	const todayMonth = today.toLocaleString('en-US', { month: 'long' });
 	const todayDate = String(today.getDate()).padStart(2, '0');
 
-	const visibleMonths = QUARTERS[quarter].filter(m => data?.[m]);
+	// Defer first render until after the tab-switch animation completes
+	useEffect(() => {
+		const task = InteractionManager.runAfterInteractions(() => setReady(true));
+		return () => task.cancel();
+	}, []);
+
+	const handleQuarterPress = useCallback((q) => {
+		if (q === displayQuarter) return;
+		// Instantly highlight the tapped button, show spinner, defer heavy re-render
+		setDisplayQuarter(q);
+		setReady(false);
+		InteractionManager.runAfterInteractions(() => {
+			setQuarter(q);
+			setReady(true);
+		});
+	}, [displayQuarter]);
+
+	// Flatten months + days into a single array — recomputes only when quarter changes
+	const flatRows = useMemo(() => {
+		const visibleMonths = QUARTERS[quarter].filter(m => data?.[m]);
+		const rows = [];
+		for (const month of visibleMonths) {
+			rows.push({ type: 'header', month, key: `h_${month}` });
+			for (const item of data[month]) {
+				rows.push({ type: 'row', month, item, key: `${month}_${item.Date}` });
+			}
+		}
+		return rows;
+	}, [quarter, data]);
+
+	const renderItem = useCallback(({ item: row }) => {
+		if (row.type === 'header') {
+			return (
+				<View style={y.monthHeader}>
+					<Text style={y.monthTitle}>✦  {row.month.toUpperCase()}</Text>
+				</View>
+			);
+		}
+		const { item, month } = row;
+		const isToday = item.Date === todayDate && month === todayMonth;
+		const glowColor = ROW_GLOW_COLORS[parseInt(item.Date, 10) % ROW_GLOW_COLORS.length];
+		return (
+			<View style={[y.row, { borderBottomColor: glowColor }, isToday && y.rowToday]}>
+				<View style={[y.colDate, y.tdDateCell]}>
+					{isToday && <Text style={y.todayTag}>TODAY</Text>}
+					<Text style={[y.tdDate, isToday && y.tdTodayText]}>{item.Date}</Text>
+				</View>
+				{TABLE_COLS.map(col => (
+					<Text key={col} style={[y.td, y.colTime, isToday && y.tdTodayText]}>
+						{item[col] || '---'}
+					</Text>
+				))}
+			</View>
+		);
+	}, [todayDate, todayMonth]);
 
 	return (
 		<View style={{ flex: 1 }}>
@@ -80,10 +148,10 @@ function YearlyView({ cityKey }) {
 				{Object.keys(QUARTERS).map(q => (
 					<TouchableOpacity
 						key={q}
-						style={[y.qBtn, quarter === q && y.qBtnActive]}
-						onPress={() => setQuarter(q)}
+						style={[y.qBtn, displayQuarter === q && y.qBtnActive]}
+						onPress={() => handleQuarterPress(q)}
 					>
-						<Text style={[y.qBtnText, quarter === q && y.qBtnTextActive]}>
+						<Text style={[y.qBtnText, displayQuarter === q && y.qBtnTextActive]}>
 							{q.toUpperCase()}
 						</Text>
 					</TouchableOpacity>
@@ -92,68 +160,46 @@ function YearlyView({ cityKey }) {
 
 			{/* Glowing card wrapper */}
 			<View style={y.glowCard}>
-				<View style={y.glowCardInner}>
-					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-						<View>
-
-							{/* Header */}
-							<View style={y.tableHeader}>
-								<View style={[y.thCell, y.colDate]}>
-									<Text style={y.thEmoji}>📅</Text>
-									<Text style={y.thLabel}>DATE</Text>
-								</View>
-								{TABLE_COLS.map(col => (
-									<View key={col} style={[y.thCell, y.colTime]}>  {/* ← no backgroundColor here */}
-										<Text style={y.thEmoji}>{COL_EMOJIS[col]}</Text>
-										<Text style={y.thLabel}>{col.toUpperCase()}</Text>
-									</View>
-								))}
-							</View>
-
-							{/* Rows */}
-							<ScrollView
-								nestedScrollEnabled={true}
-								showsVerticalScrollIndicator={false}
-								style={{ flex: 1 }}
-							>
-								{visibleMonths.map(month => (
-									<View key={month}>
-										<View style={y.monthHeader}>
-											<Text style={y.monthTitle}>✦  {month.toUpperCase()}</Text>
-										</View>
-										{data[month].map((item, idx) => {
-											const isToday = item.Date === todayDate && month === todayMonth;
-											const glowColor = ROW_GLOW_COLORS[idx % ROW_GLOW_COLORS.length];
-											return (
-												<View
-													key={item.Date}
-													style={[
-														y.row,
-														{ borderBottomColor: glowColor },
-														isToday && y.rowToday,
-													]}
-												>
-													<View style={[y.colDate, y.tdDateCell, { backgroundColor: isToday ? 'transparent' : '' }]}>
-														{isToday && <Text style={y.todayTag}>TODAY</Text>}
-														<Text style={[y.tdDate, isToday && y.tdTodayText]}>{item.Date}</Text>
-													</View>
-													{TABLE_COLS.map(col => (
-														<Text
-															key={col}
-															style={[y.td, y.colTime, isToday && y.tdTodayText, { backgroundColor: isToday ? 'transparent' : '' }]}
-														>
-															{item[col] || '---'}
-														</Text>
-													))}
-												</View>
-											);
-										})}
-									</View>
-								))}
-							</ScrollView>
-
+				<View
+					style={y.glowCardInner}
+					onLayout={e => setTableHeight(e.nativeEvent.layout.height)}
+				>
+					{!ready ? (
+						<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+							<ActivityIndicator color="#a78bfa" size="large" />
 						</View>
-					</ScrollView>
+					) : (
+						<ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }}>
+							<View style={{ height: tableHeight }}>
+								{/* Column headers — always visible above the scrollable rows */}
+								<View style={y.tableHeader}>
+									<View style={[y.thCell, y.colDate]}>
+										<Text style={y.thEmoji}>📅</Text>
+										<Text style={y.thLabel}>DATE</Text>
+									</View>
+									{TABLE_COLS.map(col => (
+										<View key={col} style={[y.thCell, y.colTime]}>
+											<Text style={y.thEmoji}>{COL_EMOJIS[col]}</Text>
+											<Text style={y.thLabel}>{col.toUpperCase()}</Text>
+										</View>
+									))}
+								</View>
+
+								{/* Virtualized rows — only renders what's visible */}
+								<FlatList
+									data={flatRows}
+									keyExtractor={row => row.key}
+									renderItem={renderItem}
+									showsVerticalScrollIndicator={false}
+									removeClippedSubviews={true}
+									maxToRenderPerBatch={15}
+									windowSize={5}
+									initialNumToRender={20}
+									style={{ flex: 1 }}
+								/>
+							</View>
+						</ScrollView>
+					)}
 				</View>
 			</View>
 		</View>
@@ -235,22 +281,15 @@ export default function HomeScreen({ navigation }) {
 		return () => clearInterval(id);
 	}, [timings]);
 
-	// Widget update
+	// Widget update — size-aware (renderWidget is called per instance with its WidgetInfo)
 	useEffect(() => {
 		if (!timings) return;
-		const cityLabel = CITIES.find(c => c.key === cityKey)?.label || cityKey;
-		const { current, next } = getCurrentAndNext(timings);
+		const model = buildWidgetModel(timings);
 
 		requestWidgetUpdate({
 			widgetName: 'Jantari',
-			renderWidget: () => (
-				<JantariWidget
-					city={cityLabel}
-					currentSalah={current?.name || null}
-					nextSalah={next.label || next.name}
-					nextTime={next.timeStr}
-					countdown={getCountdown(next.time)}
-				/>
+			renderWidget: (info) => (
+				<JantariWidget width={info.width} height={info.height} {...model} />
 			),
 			widgetNotFound: () => { },
 		}).catch(() => { });
