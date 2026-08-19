@@ -28,10 +28,10 @@ function calcDayTimings(coords, params, date) {
 	};
 }
 
-export function calcYearTimings(city) {
+export function calcYearTimings(city, madhabPref = 'shafi') {
 	const coords = new Coordinates(city.lat, city.lon);
 	const params = CalculationMethod.Karachi();
-	params.madhab = Madhab.Shafi;
+	params.madhab = madhabPref === 'hanafi' ? Madhab.Hanafi : Madhab.Shafi;
 
 	const year = new Date().getFullYear();
 	const data = {};

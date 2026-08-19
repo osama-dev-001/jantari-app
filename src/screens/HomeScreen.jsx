@@ -5,6 +5,7 @@ import {
 	Modal, FlatList, InteractionManager, ActivityIndicator, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import { vnsData } from '../data/vns';
 import { amdData } from '../data/amd';
 import { ADHAN_CITIES } from '../data/cities';
@@ -40,12 +41,6 @@ const QUARTERS = {
 	q4: MONTHS.slice(9, 12),
 };
 
-const adhanDataMap = Object.fromEntries(
-	ADHAN_CITIES.map(city => [city.key, calcYearTimings(city)])
-);
-
-const staticDataMap = { vns: vnsData, amd: amdData, ...adhanDataMap };
-
 // ─── Yearly View ─────────────────────────────────────────────────────────────
 const COL_EMOJIS = {
 	Date: '📅', Fajr: '🌌', Sunrise: '🌅', Zawal: '☀️',
@@ -73,7 +68,7 @@ const ROW_GLOW_COLORS = [
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-function YearlyView({ cityKey }) {
+function YearlyView({ cityKey, staticDataMap }) {
 	const [quarter, setQuarter] = useState('all');       // drives data (FlatList)
 	const [displayQuarter, setDisplayQuarter] = useState('all'); // drives button highlight instantly
 	const [ready, setReady] = useState(false);
@@ -252,17 +247,35 @@ export default function HomeScreen({ navigation }) {
 	const [countdown, setCountdown] = useState('');
 	const [clock, setClock] = useState('');
 	const [activeTab, setActiveTab] = useState('live');
+	const [madhab, setMadhab] = useState('shafi');
 
 	// Load city on mount
 	useEffect(() => {
 		AsyncStorage.getItem('selected_city').then(c => { if (c) setCityKey(c); });
 	}, []);
 
-	// Fetch timings on city change
+	// Re-read the madhab preference every time this screen regains focus, so
+	// changing it in Settings takes effect immediately on returning here.
+	useFocusEffect(
+		useCallback(() => {
+			AsyncStorage.getItem('prayer_madhab').then(v => setMadhab(v || 'shafi'));
+		}, [])
+	);
+
+	// Calculated (Adhan.js) cities depend on the madhab preference — recompute
+	// their yearly tables only when it actually changes, not on every render.
+	const staticDataMap = useMemo(() => {
+		const adhanDataMap = Object.fromEntries(
+			ADHAN_CITIES.map(city => [city.key, calcYearTimings(city, madhab)])
+		);
+		return { vns: vnsData, amd: amdData, ...adhanDataMap };
+	}, [madhab]);
+
+	// Fetch timings on city change or madhab change
 	useEffect(() => {
 		resolveTimings(cityKey, staticDataMap).then(setTimings);
 		AsyncStorage.setItem('selected_city', cityKey);
-	}, [cityKey]);
+	}, [cityKey, staticDataMap]);
 
 	// Clock + countdown tick
 	useEffect(() => {
@@ -282,17 +295,25 @@ export default function HomeScreen({ navigation }) {
 	}, [timings]);
 
 	// Widget update — size-aware (renderWidget is called per instance with its WidgetInfo)
+	// Pushes immediately on city/timings change, then every 5 min while the app is open.
+	// Android's OS-driven background refresh (WIDGET_UPDATE) still floors at 30 min when the app is closed.
 	useEffect(() => {
 		if (!timings) return;
-		const model = buildWidgetModel(timings);
 
-		requestWidgetUpdate({
-			widgetName: 'Jantari',
-			renderWidget: (info) => (
-				<JantariWidget width={info.width} height={info.height} {...model} />
-			),
-			widgetNotFound: () => { },
-		}).catch(() => { });
+		const pushWidgetUpdate = () => {
+			const model = buildWidgetModel(timings);
+			requestWidgetUpdate({
+				widgetName: 'Jantari',
+				renderWidget: (info) => (
+					<JantariWidget width={info.width} height={info.height} {...model} />
+				),
+				widgetNotFound: () => { },
+			}).catch(() => { });
+		};
+
+		pushWidgetUpdate();
+		const id = setInterval(pushWidgetUpdate, 5 * 60 * 1000);
+		return () => clearInterval(id);
 	}, [cityKey, timings]);
 
 	const switchCity = useCallback((key) => {
@@ -374,7 +395,7 @@ export default function HomeScreen({ navigation }) {
 				</ScrollView>
 			) : (
 				<View style={{ flex: 1, paddingHorizontal: 20, paddingBottom: 10 }}>
-					<YearlyView cityKey={cityKey} />
+					<YearlyView cityKey={cityKey} staticDataMap={staticDataMap} />
 				</View>
 			)}
 		</SafeAreaView>

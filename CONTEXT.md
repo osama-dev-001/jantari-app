@@ -1,7 +1,7 @@
-# Jantari App — React Native (Android)
+# Islamic Daily (formerly Jantari App) — React Native (Android)
 
 ## Stack
-React Native 0.85 bare workflow (no Expo). Java 21.0.11, Gradle 8.13, Android SDK 36. Package: `com.jantariapp`. JAVA_HOME set at User level (not Machine).
+React Native 0.85 bare workflow (no Expo). Java 21.0.11, Gradle 8.13, Android SDK 36. Package: `com.jantariapp` (unchanged — only the display name was rebranded, not the Android applicationId). JAVA_HOME set at User level (not Machine).
 
 ## Theme
 Dark purple/black theme throughout. Key colors: `#0f1923` (background), `#1e293b` (cards), `#6d28d9` (primary purple), `#a78bfa` (accent purple/text), `#34d399` (green/countdown), `#1a0f2e` / `#1a1040` (deep purple panels), `#3b1f6e` (muted purple border).

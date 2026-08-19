@@ -33,10 +33,11 @@ export default function LandingScreen({ navigation }) {
     <SafeAreaView style={s.root}>
       <StatusBar barStyle="light-content" backgroundColor="#0f1923" />
 
-      {/* App title */}
+      {/* Greeting */}
       <View style={s.header}>
-        <Text style={s.title}>Digital Jantari</Text>
-        {/* <Text style={s.subtitle}>رمضان مبارک</Text> */}
+        <Text style={s.brand}>Islamic Daily</Text>
+        <Text style={s.title}>مرحبا</Text>
+        <Text style={s.subtitle}>Welcome</Text>
       </View>
 
       {/* Section cards */}
@@ -58,6 +59,17 @@ export default function LandingScreen({ navigation }) {
           </TouchableOpacity>
         ))}
       </View>
+
+      {/* Settings */}
+      <TouchableOpacity
+        style={s.settingsRow}
+        onPress={() => navigation.navigate('Settings')}
+        activeOpacity={0.85}
+      >
+        <Text style={s.settingsIcon}>⚙️</Text>
+        <Text style={s.settingsLabel}>Settings</Text>
+        <Text style={s.settingsArrow}>›</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -72,11 +84,21 @@ const s = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 48,
   },
+  brand: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#a78bfa',
+    letterSpacing: 3,
+    textTransform: 'uppercase',
+    marginBottom: 14,
+  },
   title: {
-    fontSize: 30,
+    fontSize: 40,
     fontWeight: '700',
     color: '#fff',
     letterSpacing: 1,
+    fontFamily: 'serif',
+    writingDirection: 'rtl',
   },
   subtitle: {
     fontSize: 18,
@@ -128,4 +150,17 @@ const s = StyleSheet.create({
     right: 0,
     height: 3,
   },
+  settingsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1e293b',
+    borderRadius: 16,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    marginHorizontal: 20,
+    marginTop: 16,
+  },
+  settingsIcon: { fontSize: 18, marginRight: 10 },
+  settingsLabel: { flex: 1, color: '#d1d5db', fontWeight: '600', fontSize: 14 },
+  settingsArrow: { color: '#6b7280', fontSize: 18 },
 });

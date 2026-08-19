@@ -1,7 +1,7 @@
 {
-  "background": "#0f1923",
+  "background": "#000000",
   "logo": {
-    "width": 160,
-    "height": 284
+    "width": 120,
+    "height": 120
   }
 }

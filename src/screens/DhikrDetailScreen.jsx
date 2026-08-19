@@ -275,6 +275,12 @@ export default function DhikrDetailScreen({ route, navigation }) {
     saveCount(item.id, 0);
   };
 
+  const handleComplete = () => {
+    setCount(item.count);
+    saveCount(item.id, item.count);
+    Vibration.vibrate(30);
+  };
+
   const translation = item.translations[lang];
   const isTodo = translation?.startsWith('// TODO');
 
@@ -326,9 +332,18 @@ export default function DhikrDetailScreen({ route, navigation }) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={s.resetBtn} onPress={handleReset}>
-          <Text style={s.resetText}>↺ Reset</Text>
-        </TouchableOpacity>
+        <View style={s.actionRow}>
+          <TouchableOpacity style={s.resetBtn} onPress={handleReset}>
+            <Text style={s.resetText}>↺ Reset</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[s.completeBtn, completed && s.completeBtnDisabled]}
+            onPress={handleComplete}
+            disabled={completed}
+          >
+            <Text style={s.completeText}>✓ Complete</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Prev / Next navigation */}
         {items.length > 1 && (
@@ -423,11 +438,24 @@ const s = StyleSheet.create({
   countTotal: { fontSize: 24, color: '#6b7280' },
   tapHint: { fontSize: 11, color: '#6b7280', letterSpacing: 2, fontWeight: '700' },
   tapHintDone: { color: '#34d399' },
-  resetBtn: {
-    paddingHorizontal: 24, paddingVertical: 10,
-    backgroundColor: '#1e293b', borderRadius: 12, marginBottom: 16,
+  actionRow: {
+    flexDirection: 'row', width: '100%', gap: 12, marginBottom: 20,
   },
-  resetText: { color: '#6b7280', fontWeight: '600', fontSize: 14 },
+  resetBtn: {
+    flex: 1, alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 12, borderRadius: 14,
+    backgroundColor: '#1e293b',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+  },
+  resetText: { color: '#9ca3af', fontWeight: '600', fontSize: 14 },
+  completeBtn: {
+    flex: 1, alignItems: 'center', justifyContent: 'center',
+    paddingVertical: 12, borderRadius: 14,
+    backgroundColor: '#0a1f1a',
+    borderWidth: 1, borderColor: 'rgba(52,211,153,0.35)',
+  },
+  completeBtnDisabled: { opacity: 0.5 },
+  completeText: { color: '#34d399', fontWeight: '600', fontSize: 14 },
 
   // ─── Nav row ───────────────────────────────────────────────────────────────
   navRow: {

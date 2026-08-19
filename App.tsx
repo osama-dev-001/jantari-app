@@ -7,6 +7,7 @@ import LandingScreen from './src/screens/LandingScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import DhikrScreen from './src/screens/DhikrScreen';
 import DhikrDetailScreen from './src/screens/DhikrDetailScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Dhikr" component={DhikrScreen} />
         <Stack.Screen name="DhikrDetail" component={DhikrDetailScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
