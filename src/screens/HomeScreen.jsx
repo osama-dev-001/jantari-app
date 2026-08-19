@@ -16,6 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { JantariWidget } from '../widget/JantariWidget';
 import { buildWidgetModel } from '../widget/widgetData';
 import { requestWidgetUpdate } from 'react-native-android-widget';
+import { COLORS } from '../theme';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
@@ -161,7 +162,7 @@ function YearlyView({ cityKey, staticDataMap }) {
 				>
 					{!ready ? (
 						<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-							<ActivityIndicator color="#a78bfa" size="large" />
+							<ActivityIndicator color={COLORS.primaryLight} size="large" />
 						</View>
 					) : (
 						<ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flex: 1 }}>
@@ -326,7 +327,7 @@ export default function HomeScreen({ navigation }) {
 
 	return (
 		<SafeAreaView style={s.root}>
-			<StatusBar barStyle="light-content" backgroundColor="#0f1923" />
+			<StatusBar barStyle="light-content" backgroundColor={COLORS.bg} />
 
 			{/* ── Header ── */}
 			<View style={s.header}>
@@ -405,24 +406,24 @@ export default function HomeScreen({ navigation }) {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-	root: { flex: 1, backgroundColor: '#0f1923' },
+	root: { flex: 1, backgroundColor: COLORS.bg },
 	header: {
 		flexDirection: 'row', justifyContent: 'space-between',
 		alignItems: 'center', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12,
 	},
-	appTitle: { fontSize: 28, fontWeight: '700', color: '#fff', letterSpacing: 1 },
-	dateStr: { fontSize: 13, color: '#6b7280', marginTop: 2 },
+	appTitle: { fontSize: 28, fontWeight: '700', color: COLORS.textPrimary, letterSpacing: 1 },
+	dateStr: { fontSize: 13, color: COLORS.textFaint, marginTop: 2 },
 	tabRow: {
 		flexDirection: 'row', marginHorizontal: 20, marginBottom: 12,
-		backgroundColor: '#1e293b', borderRadius: 12, padding: 4,
+		backgroundColor: COLORS.surface, borderRadius: 12, padding: 4,
 	},
 	tab: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 10 },
-	tabActive: { backgroundColor: '#6d28d9' },
-	tabText: { color: '#6b7280', fontWeight: '600', fontSize: 13 },
-	tabTextActive: { color: '#fff' },
+	tabActive: { backgroundColor: COLORS.primary },
+	tabText: { color: COLORS.textFaint, fontWeight: '600', fontSize: 13 },
+	tabTextActive: { color: COLORS.textPrimary },
 	scroll: { paddingHorizontal: 20, paddingBottom: 30 },
 	nextBanner: {
-		backgroundColor: '#1e293b',
+		backgroundColor: COLORS.surface,
 		borderRadius: 16,
 		padding: 16,
 		marginBottom: 16,
@@ -430,81 +431,81 @@ const s = StyleSheet.create({
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		borderLeftWidth: 4,
-		borderLeftColor: '#6d28d9',
+		borderLeftColor: COLORS.primary,
 	},
 	nextBannerLeft: { gap: 4 },
 	nextBannerLabel: {
-		fontSize: 10, color: '#6b7280',
+		fontSize: 10, color: COLORS.textFaint,
 		fontWeight: '800', letterSpacing: 2,
 	},
 	nextBannerName: {
-		fontSize: 22, color: '#a78bfa',
+		fontSize: 22, color: COLORS.primaryLight,
 		fontWeight: '800', letterSpacing: 1,
 	},
 	nextBannerRight: { alignItems: 'flex-end', gap: 4 },
 	nextBannerTime: {
-		fontSize: 14, color: '#d1d5db', fontWeight: '600',
+		fontSize: 14, color: COLORS.textSecondary, fontWeight: '600',
 	},
 	nextBannerCountdown: {
-		fontSize: 20, color: '#34d399',
+		fontSize: 20, color: COLORS.success,
 		fontWeight: '800', letterSpacing: 1,
 	},
 	scheduleCard: {
-		backgroundColor: '#1e293b', borderRadius: 20,
+		backgroundColor: COLORS.surface, borderRadius: 20,
 		overflow: 'hidden', marginBottom: 14,
 	},
 	row: {
 		flexDirection: 'row', alignItems: 'center',
 		paddingHorizontal: 18, paddingVertical: 13,
-		borderBottomWidth: 1, borderBottomColor: '#0f1923',
+		borderBottomWidth: 1, borderBottomColor: COLORS.bg,
 	},
-	rowCurrent: { backgroundColor: '#052e16' },
-	rowNext: { backgroundColor: '#1a1040' },
-	prayerName: { flex: 1, fontSize: 15, color: '#d1d5db', fontWeight: '500' },
-	prayerTime: { fontSize: 15, color: '#9ca3af' },
-	textAccent: { color: '#a78bfa' },
+	rowCurrent: { backgroundColor: COLORS.successSurface },
+	rowNext: { backgroundColor: COLORS.surfaceDeep },
+	prayerName: { flex: 1, fontSize: 15, color: COLORS.textSecondary, fontWeight: '500' },
+	prayerTime: { fontSize: 15, color: COLORS.textMuted },
+	textAccent: { color: COLORS.primaryLight },
 	badge: {
-		marginLeft: 8, backgroundColor: '#6d28d9', color: '#fff',
+		marginLeft: 8, backgroundColor: COLORS.primary, color: COLORS.textPrimary,
 		fontSize: 9, fontWeight: '700', paddingHorizontal: 7,
 		paddingVertical: 2, borderRadius: 5, letterSpacing: 1,
 	},
 	badgeCurrent: {
-		marginLeft: 8, backgroundColor: '#065f46', color: '#34d399',
+		marginLeft: 8, backgroundColor: COLORS.successBadgeBg, color: COLORS.success,
 		fontSize: 9, fontWeight: '700', paddingHorizontal: 7,
 		paddingVertical: 2, borderRadius: 5,
 	},
-	sehriIftar: { textAlign: 'center', color: '#6b7280', fontSize: 12, marginBottom: 10 },
+	sehriIftar: { textAlign: 'center', color: COLORS.textFaint, fontSize: 12, marginBottom: 10 },
 });
 
 // Dropdown styles
 const d = StyleSheet.create({
 	pill: {
 		flexDirection: 'row', alignItems: 'center',
-		backgroundColor: '#1e293b', borderRadius: 20,
+		backgroundColor: COLORS.surface, borderRadius: 20,
 		paddingHorizontal: 14, paddingVertical: 8, gap: 6,
 	},
-	pillText: { color: '#fff', fontWeight: '600', fontSize: 14 },
-	pillArrow: { color: '#6b7280', fontSize: 12 },
+	pillText: { color: COLORS.textPrimary, fontWeight: '600', fontSize: 14 },
+	pillArrow: { color: COLORS.textFaint, fontSize: 12 },
 	overlay: {
 		flex: 1, backgroundColor: 'rgba(0,0,0,0.6)',
 		justifyContent: 'flex-end',
 	},
 	sheet: {
-		backgroundColor: '#1e293b', borderTopLeftRadius: 20,
+		backgroundColor: COLORS.surface, borderTopLeftRadius: 20,
 		borderTopRightRadius: 20, padding: 20, paddingBottom: 36,
 	},
 	sheetTitle: {
-		color: '#6b7280', fontSize: 11, fontWeight: '700',
+		color: COLORS.textFaint, fontSize: 11, fontWeight: '700',
 		letterSpacing: 2, marginBottom: 12,
 	},
 	option: {
 		flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-		paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#0f1923',
+		paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: COLORS.bg,
 	},
 	optionActive: {},
-	optionText: { fontSize: 16, color: '#d1d5db', fontWeight: '500' },
-	optionTextActive: { color: '#a78bfa', fontWeight: '700' },
-	check: { color: '#a78bfa', fontSize: 16 },
+	optionText: { fontSize: 16, color: COLORS.textSecondary, fontWeight: '500' },
+	optionTextActive: { color: COLORS.primaryLight, fontWeight: '700' },
+	check: { color: COLORS.primaryLight, fontSize: 16 },
 });
 
 // Yearly styles
@@ -514,11 +515,11 @@ const y = StyleSheet.create({
 	},
 	qBtn: {
 		flex: 1, paddingVertical: 7, alignItems: 'center',
-		backgroundColor: '#1e293b', borderRadius: 8,
+		backgroundColor: COLORS.surface, borderRadius: 8,
 	},
-	qBtnActive: { backgroundColor: '#6d28d9' },
-	qBtnText: { color: '#6b7280', fontSize: 12, fontWeight: '700' },
-	qBtnTextActive: { color: '#fff' },
+	qBtnActive: { backgroundColor: COLORS.primary },
+	qBtnText: { color: COLORS.textFaint, fontSize: 12, fontWeight: '700' },
+	qBtnTextActive: { color: COLORS.textPrimary },
 
 	// ── Glowing card (like landing page) ──
 	glowCard: {
@@ -526,16 +527,16 @@ const y = StyleSheet.create({
 		borderRadius: 18,
 		padding: 2,
 		backgroundColor: 'transparent',
-		shadowColor: '#6d28d9',
+		shadowColor: COLORS.primary,
 		shadowOffset: { width: 0, height: 0 },
 		shadowOpacity: 0.4,        // was 0.9
 		shadowRadius: 8,           // was 12
 		elevation: 6,              // was 12
 		borderWidth: 1,            // was 1.5
-		borderColor: '#3b1f6e',    // was #6d28d9 — much darker purple
+		borderColor: COLORS.border, // much darker purple than the shadow color
 	},
 	glowCardInner: {
-		backgroundColor: '#111827',
+		backgroundColor: COLORS.surfaceDeepest,
 		borderRadius: 16,
 		overflow: 'hidden',
 		flex: 1
@@ -544,11 +545,11 @@ const y = StyleSheet.create({
 	// ── Table Header ──
 	tableHeader: {
 		flexDirection: 'row',
-		backgroundColor: '#1a1040',          // deep purple tint like landing cards
+		backgroundColor: COLORS.surfaceDeep, // deep purple tint like landing cards
 		paddingVertical: 12,
 		paddingHorizontal: 4,
 		borderBottomWidth: 1,
-		borderBottomColor: '#6d28d9',        // purple separator line
+		borderBottomColor: COLORS.primary,   // purple separator line
 	},
 	thCell: {
 		alignItems: 'center',
@@ -558,18 +559,18 @@ const y = StyleSheet.create({
 	thEmoji: { fontSize: 18, marginBottom: 4 },
 	thLabel: {
 		fontSize: 8, fontWeight: '800',
-		color: '#a78bfa', letterSpacing: 1,  // purple labels
+		color: COLORS.primaryLight, letterSpacing: 1,
 	},
 
 	// ── Month Header ──
 	monthHeader: {
-		backgroundColor: '#0f0a1e',          // very dark purple
+		backgroundColor: COLORS.surfaceDeepest,
 		paddingVertical: 7, paddingHorizontal: 8,
 		marginTop: 4,
-		borderLeftWidth: 3, borderLeftColor: '#7c3aed',
+		borderLeftWidth: 3, borderLeftColor: COLORS.primaryVivid,
 	},
 	monthTitle: {
-		color: '#a78bfa', fontSize: 11,
+		color: COLORS.primaryLight, fontSize: 11,
 		fontWeight: '800', letterSpacing: 2,
 	},
 
@@ -580,7 +581,7 @@ const y = StyleSheet.create({
 		borderBottomColor: 'transparent', // overridden per row
 		alignItems: 'center',
 	},
-	rowToday: { backgroundColor: '#1a1040' },
+	rowToday: { backgroundColor: COLORS.surfaceDeep },
 
 	// ── Date cell ──
 	tdDateCell: {
@@ -589,23 +590,23 @@ const y = StyleSheet.create({
 	},
 	todayTag: {
 		fontSize: 7, fontWeight: '800',
-		backgroundColor: '#6d28d9', color: '#fff',
+		backgroundColor: COLORS.primary, color: COLORS.textPrimary,
 		paddingHorizontal: 3, paddingVertical: 1,
 		borderRadius: 3, marginBottom: 2, letterSpacing: 1,
 	},
 	tdDate: {
-		color: '#6b7280', fontSize: 12,
+		color: COLORS.textFaint, fontSize: 12,
 		fontWeight: '700', textAlign: 'center',
 	},
 
 	// ── Time cells ──
 	td: {
 		fontFamily: 'monospace',
-		fontSize: 11, color: '#9ca3af',
+		fontSize: 11, color: COLORS.textMuted,
 		textAlign: 'center',
 		paddingVertical: 8,
 	},
-	tdTodayText: { color: '#a78bfa', fontWeight: '700' },
+	tdTodayText: { color: COLORS.primaryLight, fontWeight: '700' },
 
 	// ── Column widths ──
 	colDate: { width: 44 },

@@ -1,16 +1,17 @@
 import React from 'react';
 import { FlexWidget, TextWidget } from 'react-native-android-widget';
+import { COLORS } from '../theme';
 
-// ── palette ──
+// ── palette (shared with the app via ../theme, so the widget can't drift) ──
 // Translucent dark fill so the wallpaper shows through (no real backdrop blur is
 // possible in an Android RemoteViews widget — this is the closest approximation).
-const BG = '#1a0f2e8C'; // ~55% opaque dark purple
-const LABEL = '#a78bfa';
-const COUNTDOWN = '#34d399';
-const HINT = '#4b5563';
-const REFRESH = '#6b7280';
-const PAST = '#6b7280';
-const FUTURE = '#9ca3af';
+const BG = `${COLORS.surfaceDeep}8C`; // ~55% opaque dark purple
+const LABEL = COLORS.primaryLight;
+const COUNTDOWN = COLORS.success;
+const HINT = COLORS.textFainter;
+const REFRESH = COLORS.textFaint;
+const PAST = COLORS.textFaint;
+const FUTURE = COLORS.textMuted;
 
 // ── size buckets (dp) ──
 const WIDE_MIN = 180;   // ≈ ≥ 2 cells wide — inline countdown+hint

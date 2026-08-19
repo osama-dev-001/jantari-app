@@ -6,9 +6,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FAVOURITES, OTHERS } from '../data/adhkar';
+import { COLORS } from '../theme';
 
 const TIME_LABEL = { morning: 'صبح', evening: 'شام', any: '' };
-const TIME_COLOR = { morning: '#d97706', evening: '#6d28d9', any: '#0e7490' };
+// morning/evening borrow the sunrise/dusk metaphor; "any" (no specific time)
+// gets Dhikr's own identity color instead of a third, unrelated hue.
+const TIME_COLOR = { morning: COLORS.amber, evening: COLORS.primary, any: COLORS.gold };
 
 function todayKey(id) {
   const d = new Date().toISOString().slice(0, 10);
@@ -93,7 +96,7 @@ export default function DhikrScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <StatusBar barStyle="light-content" backgroundColor="#0f1923" />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.bg} />
 
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -154,43 +157,43 @@ export default function DhikrScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0f1923' },
+  root: { flex: 1, backgroundColor: COLORS.bg },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12,
   },
-  back: { fontSize: 24, color: '#6b7280', width: 32 },
-  title: { fontSize: 24, fontWeight: '700', color: '#fff', textAlign: 'center' },
-  titleAr: { fontSize: 14, color: '#6b7280', textAlign: 'center', fontFamily: 'serif' },
+  back: { fontSize: 24, color: COLORS.textFaint, width: 32 },
+  title: { fontSize: 24, fontWeight: '700', color: COLORS.textPrimary, textAlign: 'center' },
+  titleAr: { fontSize: 14, color: COLORS.textFaint, textAlign: 'center', fontFamily: 'serif' },
   summaryRow: {
     flexDirection: 'row', justifyContent: 'center',
     marginBottom: 8, paddingHorizontal: 20,
   },
-  summaryText: { fontSize: 12, color: '#6b7280' },
-  summaryDone: { fontSize: 12, color: '#34d399', fontWeight: '700' },
+  summaryText: { fontSize: 12, color: COLORS.textFaint },
+  summaryDone: { fontSize: 12, color: COLORS.success, fontWeight: '700' },
   tabRow: {
     flexDirection: 'row', marginHorizontal: 20, marginBottom: 16,
-    backgroundColor: '#1e293b', borderRadius: 12, padding: 4,
+    backgroundColor: COLORS.surface, borderRadius: 12, padding: 4,
   },
   tab: { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: 10 },
-  tabActive: { backgroundColor: '#0e7490' },
-  tabText: { color: '#6b7280', fontWeight: '600', fontSize: 13 },
-  tabTextActive: { color: '#fff' },
+  tabActive: { backgroundColor: COLORS.gold },
+  tabText: { color: COLORS.textFaint, fontWeight: '600', fontSize: 13 },
+  tabTextActive: { color: COLORS.textPrimary },
   scroll: { paddingHorizontal: 20, paddingBottom: 30 },
   card: {
-    backgroundColor: '#1e293b', borderRadius: 16,
+    backgroundColor: COLORS.surface, borderRadius: 16,
     marginBottom: 12, overflow: 'hidden',
   },
-  cardDone: { backgroundColor: '#0d1f1a' },
+  cardDone: { backgroundColor: COLORS.successSurface },
   progressTrack: { height: 3, backgroundColor: 'rgba(255,255,255,0.06)' },
-  progressFill: { height: 3, backgroundColor: '#6d28d9', borderRadius: 2 },
-  progressDone: { backgroundColor: '#34d399' },
+  progressFill: { height: 3, backgroundColor: COLORS.gold, borderRadius: 2 },
+  progressDone: { backgroundColor: COLORS.success },
   cardTop: {
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'flex-start', padding: 18, paddingBottom: 8,
   },
   cardArabic: {
-    flex: 1, fontSize: 18, color: '#fff',
+    flex: 1, fontSize: 18, color: COLORS.textPrimary,
     fontFamily: 'serif', lineHeight: 30,
     textAlign: 'right', marginRight: 8,
   },
@@ -200,17 +203,17 @@ const s = StyleSheet.create({
   },
   timeBadgeText: { fontSize: 12, fontWeight: '700', fontFamily: 'serif' },
   doneBadge: {
-    backgroundColor: '#14532d', width: 24, height: 24,
+    backgroundColor: COLORS.successBadgeBg, width: 24, height: 24,
     borderRadius: 12, alignItems: 'center', justifyContent: 'center',
   },
-  doneText: { color: '#34d399', fontSize: 13, fontWeight: '700' },
+  doneText: { color: COLORS.success, fontSize: 13, fontWeight: '700' },
   cardBottom: {
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'center', paddingHorizontal: 18, paddingBottom: 14,
   },
-  cardName: { fontSize: 13, color: '#6b7280', flex: 1 },
-  countText: { color: '#6b7280', fontSize: 13, fontWeight: '600' },
-  countTextDone: { color: '#34d399' },
+  cardName: { fontSize: 13, color: COLORS.textFaint, flex: 1 },
+  countText: { color: COLORS.textFaint, fontSize: 13, fontWeight: '600' },
+  countTextDone: { color: COLORS.success },
   empty: { alignItems: 'center', marginTop: 80 },
-  emptyText: { color: '#6b7280', fontSize: 16 },
+  emptyText: { color: COLORS.textFaint, fontSize: 16 },
 });

@@ -6,6 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../theme';
 
 const { width } = Dimensions.get('window');
 const CARD_SIZE = width - 64;
@@ -88,7 +89,7 @@ function buildPerimeterDots(W, H) {
   return pts;
 }
 
-function DotProgressBorder({ current, total, cardHeight, color = '#6d28d9', doneColor = '#34d399' }) {
+function DotProgressBorder({ current, total, cardHeight, color = COLORS.gold, doneColor = COLORS.success }) {
   const pts = buildPerimeterDots(CARD_SIZE, cardHeight);
   const filledCount = total > 0 ? Math.round((current / total) * pts.length) : 0;
   const isComplete = current >= total && total > 0;
@@ -123,10 +124,10 @@ function ModalLangPicker({ lang, onChange }) {
           onPress={() => onChange(key)}
           style={{
             paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12,
-            backgroundColor: lang === key ? '#6d28d9' : 'rgba(255,255,255,0.08)',
+            backgroundColor: lang === key ? COLORS.gold : 'rgba(255,255,255,0.08)',
           }}
         >
-          <Text style={{ fontSize: 12, color: lang === key ? '#fff' : '#9ca3af' }}>{label}</Text>
+          <Text style={{ fontSize: 12, color: lang === key ? COLORS.textPrimary : COLORS.textMuted }}>{label}</Text>
         </TouchableOpacity>
       ))}
     </View>
@@ -289,7 +290,7 @@ export default function DhikrDetailScreen({ route, navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <StatusBar barStyle="light-content" backgroundColor="#0f1923" />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.bg} />
 
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -407,55 +408,55 @@ export default function DhikrDetailScreen({ route, navigation }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0f1923' },
+  root: { flex: 1, backgroundColor: COLORS.bg },
   header: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12,
   },
-  back: { fontSize: 24, color: '#6b7280', width: 32 },
-  title: { fontSize: 16, fontWeight: '700', color: '#fff' },
-  titleAr: { fontSize: 13, color: '#6b7280', fontFamily: 'serif' },
+  back: { fontSize: 24, color: COLORS.textFaint, width: 32 },
+  title: { fontSize: 16, fontWeight: '700', color: COLORS.textPrimary },
+  titleAr: { fontSize: 13, color: COLORS.textFaint, fontFamily: 'serif' },
   headerIcons: { flexDirection: 'row', gap: 4 },
   hadithBtn: { width: 32, alignItems: 'center' },
   hadithIcon: { fontSize: 20 },
   scroll: { paddingHorizontal: 20, paddingBottom: 40, alignItems: 'center' },
   card: {
     width: CARD_SIZE, minHeight: CARD_SIZE * 0.85,
-    backgroundColor: '#1e293b', borderRadius: 20,
+    backgroundColor: COLORS.surface, borderRadius: 20,
     padding: 28, alignItems: 'center', justifyContent: 'center',
     overflow: 'hidden', marginTop: 8, marginBottom: 16,
   },
-  cardDone: { backgroundColor: '#0a1f1a' },
+  cardDone: { backgroundColor: COLORS.successSurface },
   arabic: {
-    fontSize: 22, color: '#fff', fontFamily: 'serif',
+    fontSize: 22, color: COLORS.textPrimary, fontFamily: 'serif',
     textAlign: 'center', lineHeight: 42, marginBottom: 24,
     writingDirection: 'rtl',
   },
   countRow: { flexDirection: 'row', alignItems: 'baseline', gap: 4, marginBottom: 8 },
-  countNum: { fontSize: 40, fontWeight: '700', color: '#a78bfa' },
-  countNumDone: { color: '#34d399' },
-  countSep: { fontSize: 24, color: '#6b7280' },
-  countTotal: { fontSize: 24, color: '#6b7280' },
-  tapHint: { fontSize: 11, color: '#6b7280', letterSpacing: 2, fontWeight: '700' },
-  tapHintDone: { color: '#34d399' },
+  countNum: { fontSize: 40, fontWeight: '700', color: COLORS.gold },
+  countNumDone: { color: COLORS.success },
+  countSep: { fontSize: 24, color: COLORS.textFaint },
+  countTotal: { fontSize: 24, color: COLORS.textFaint },
+  tapHint: { fontSize: 11, color: COLORS.textFaint, letterSpacing: 2, fontWeight: '700' },
+  tapHintDone: { color: COLORS.success },
   actionRow: {
     flexDirection: 'row', width: '100%', gap: 12, marginBottom: 20,
   },
   resetBtn: {
     flex: 1, alignItems: 'center', justifyContent: 'center',
     paddingVertical: 12, borderRadius: 14,
-    backgroundColor: '#1e293b',
+    backgroundColor: COLORS.surface,
     borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
   },
-  resetText: { color: '#9ca3af', fontWeight: '600', fontSize: 14 },
+  resetText: { color: COLORS.textMuted, fontWeight: '600', fontSize: 14 },
   completeBtn: {
     flex: 1, alignItems: 'center', justifyContent: 'center',
     paddingVertical: 12, borderRadius: 14,
-    backgroundColor: '#0a1f1a',
+    backgroundColor: COLORS.successSurface,
     borderWidth: 1, borderColor: 'rgba(52,211,153,0.35)',
   },
   completeBtnDisabled: { opacity: 0.5 },
-  completeText: { color: '#34d399', fontWeight: '600', fontSize: 14 },
+  completeText: { color: COLORS.success, fontWeight: '600', fontSize: 14 },
 
   // ─── Nav row ───────────────────────────────────────────────────────────────
   navRow: {
@@ -464,64 +465,64 @@ const s = StyleSheet.create({
   },
   navBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#1e293b', borderRadius: 14,
+    backgroundColor: COLORS.surface, borderRadius: 14,
     paddingHorizontal: 12, paddingVertical: 10, gap: 6,
   },
   navBtnRight: { justifyContent: 'flex-end' },
   navBtnDisabled: { opacity: 0.35 },
-  navArrow: { fontSize: 22, color: '#a78bfa', fontWeight: '700', lineHeight: 26 },
-  navLabel: { flex: 1, fontSize: 11, color: '#9ca3af', fontWeight: '600' },
+  navArrow: { fontSize: 22, color: COLORS.gold, fontWeight: '700', lineHeight: 26 },
+  navLabel: { flex: 1, fontSize: 11, color: COLORS.textMuted, fontWeight: '600' },
   navLabelRight: { textAlign: 'right' },
-  navDimmed: { color: '#4b5563' },
+  navDimmed: { color: COLORS.textFainter },
   navPill: {
     flexDirection: 'row', alignItems: 'baseline',
-    backgroundColor: '#1e293b', borderRadius: 10,
+    backgroundColor: COLORS.surface, borderRadius: 10,
     paddingHorizontal: 10, paddingVertical: 6,
   },
-  navCurrent: { fontSize: 16, fontWeight: '700', color: '#a78bfa' },
-  navSlash: { fontSize: 12, color: '#4b5563' },
-  navTotal: { fontSize: 12, color: '#6b7280', fontWeight: '600' },
+  navCurrent: { fontSize: 16, fontWeight: '700', color: COLORS.gold },
+  navSlash: { fontSize: 12, color: COLORS.textFainter },
+  navTotal: { fontSize: 12, color: COLORS.textFaint, fontWeight: '600' },
 
   // ─── Translation ────────────────────────────────────────────────────────────
-  translationBox: { width: '100%', backgroundColor: '#1e293b', borderRadius: 16, padding: 18 },
+  translationBox: { width: '100%', backgroundColor: COLORS.surface, borderRadius: 16, padding: 18 },
   translationHeader: {
     flexDirection: 'row', justifyContent: 'space-between',
     alignItems: 'center', marginBottom: 12,
   },
-  translationLabel: { color: '#6b7280', fontSize: 12, fontWeight: '700', letterSpacing: 1 },
-  translationText: { color: '#d1d5db', fontSize: 15, lineHeight: 26 },
-  translationTodo: { color: '#4b5563', fontStyle: 'italic' },
+  translationLabel: { color: COLORS.textFaint, fontSize: 12, fontWeight: '700', letterSpacing: 1 },
+  translationText: { color: COLORS.textSecondary, fontSize: 15, lineHeight: 26 },
+  translationTodo: { color: COLORS.textFainter, fontStyle: 'italic' },
 });
 
 const m = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet: {
-    backgroundColor: '#1e293b', borderTopLeftRadius: 20,
+    backgroundColor: COLORS.surface, borderTopLeftRadius: 20,
     borderTopRightRadius: 20, padding: 24, paddingBottom: 40,
   },
-  title: { color: '#6b7280', fontSize: 11, fontWeight: '700', letterSpacing: 2, marginBottom: 16 },
-  hadith: { color: '#d1d5db', fontSize: 15, lineHeight: 24 },
-  todoText: { color: '#4b5563', fontStyle: 'italic' },
+  title: { color: COLORS.textFaint, fontSize: 11, fontWeight: '700', letterSpacing: 2, marginBottom: 16 },
+  hadith: { color: COLORS.textSecondary, fontSize: 15, lineHeight: 24 },
+  todoText: { color: COLORS.textFainter, fontStyle: 'italic' },
   closeBtn: {
-    marginTop: 20, backgroundColor: '#0f1923',
+    marginTop: 20, backgroundColor: COLORS.bg,
     borderRadius: 12, paddingVertical: 12, alignItems: 'center',
   },
-  closeBtnText: { color: '#6b7280', fontWeight: '600' },
+  closeBtnText: { color: COLORS.textFaint, fontWeight: '600' },
 });
 
 const tr = StyleSheet.create({
   pill: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#0f1923', borderRadius: 10,
+    backgroundColor: COLORS.bg, borderRadius: 10,
     paddingHorizontal: 12, paddingVertical: 6, gap: 4,
   },
-  pillText: { color: '#fff', fontWeight: '600', fontSize: 13 },
-  arrow: { color: '#6b7280', fontSize: 10 },
+  pillText: { color: COLORS.textPrimary, fontWeight: '600', fontSize: 13 },
+  arrow: { color: COLORS.textFaint, fontSize: 10 },
   option: {
     flexDirection: 'row', justifyContent: 'space-between',
-    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#0f1923',
+    paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: COLORS.bg,
   },
-  optionText: { fontSize: 16, color: '#d1d5db' },
-  optionTextActive: { color: '#a78bfa', fontWeight: '700' },
-  check: { color: '#a78bfa' },
+  optionText: { fontSize: 16, color: COLORS.textSecondary },
+  optionTextActive: { color: COLORS.gold, fontWeight: '700' },
+  check: { color: COLORS.gold },
 });

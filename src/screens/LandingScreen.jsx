@@ -4,6 +4,7 @@ import {
   TouchableOpacity, StatusBar, Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { COLORS } from '../theme';
 
 const { width } = Dimensions.get('window');
 
@@ -14,7 +15,7 @@ const SECTIONS = [
     arabic: 'جنتری',
     description: 'Prayer times & yearly calendar',
     icon: '🕌',
-    accent: '#6d28d9',
+    accent: COLORS.primary,
     screen: 'Home',
   },
   {
@@ -23,7 +24,7 @@ const SECTIONS = [
     arabic: 'ذِکر',
     description: 'Morning & evening adhkar',
     icon: '📿',
-    accent: '#0e7490',
+    accent: COLORS.gold,
     screen: 'Dhikr',
   },
 ];
@@ -31,7 +32,7 @@ const SECTIONS = [
 export default function LandingScreen({ navigation }) {
   return (
     <SafeAreaView style={s.root}>
-      <StatusBar barStyle="light-content" backgroundColor="#0f1923" />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.bg} />
 
       {/* Greeting */}
       <View style={s.header}>
@@ -77,7 +78,7 @@ export default function LandingScreen({ navigation }) {
 const s = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#0f1923',
+    backgroundColor: COLORS.bg,
     justifyContent: 'center',
   },
   header: {
@@ -87,7 +88,7 @@ const s = StyleSheet.create({
   brand: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#a78bfa',
+    color: COLORS.primaryLight,
     letterSpacing: 3,
     textTransform: 'uppercase',
     marginBottom: 14,
@@ -95,14 +96,14 @@ const s = StyleSheet.create({
   title: {
     fontSize: 40,
     fontWeight: '700',
-    color: '#fff',
+    color: COLORS.textPrimary,
     letterSpacing: 1,
     fontFamily: 'serif',
     writingDirection: 'rtl',
   },
   subtitle: {
     fontSize: 18,
-    color: '#6b7280',
+    color: COLORS.textFaint,
     marginTop: 6,
     fontFamily: 'serif',
   },
@@ -113,7 +114,7 @@ const s = StyleSheet.create({
   },
   card: {
     flex: 1,
-    backgroundColor: '#1e293b',
+    backgroundColor: COLORS.surface,
     borderRadius: 20,
     padding: 20,
     alignItems: 'center',
@@ -128,7 +129,7 @@ const s = StyleSheet.create({
   },
   cardArabic: {
     fontSize: 20,
-    color: '#d1d5db',
+    color: COLORS.textSecondary,
     fontFamily: 'serif',
     marginBottom: 6,
   },
@@ -139,7 +140,7 @@ const s = StyleSheet.create({
   },
   cardDesc: {
     fontSize: 11,
-    color: '#6b7280',
+    color: COLORS.textFaint,
     textAlign: 'center',
     lineHeight: 16,
   },
@@ -153,7 +154,7 @@ const s = StyleSheet.create({
   settingsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1e293b',
+    backgroundColor: COLORS.surface,
     borderRadius: 16,
     paddingVertical: 14,
     paddingHorizontal: 18,
@@ -161,6 +162,6 @@ const s = StyleSheet.create({
     marginTop: 16,
   },
   settingsIcon: { fontSize: 18, marginRight: 10 },
-  settingsLabel: { flex: 1, color: '#d1d5db', fontWeight: '600', fontSize: 14 },
-  settingsArrow: { color: '#6b7280', fontSize: 18 },
+  settingsLabel: { flex: 1, color: COLORS.textSecondary, fontWeight: '600', fontSize: 14 },
+  settingsArrow: { color: COLORS.textFaint, fontSize: 18 },
 });

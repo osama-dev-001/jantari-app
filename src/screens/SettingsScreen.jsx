@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, StatusBar, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../theme';
 
 const MADHAB_KEY = 'prayer_madhab';
 
@@ -26,7 +27,7 @@ export default function SettingsScreen({ navigation }) {
 
   return (
     <SafeAreaView style={s.root}>
-      <StatusBar barStyle="light-content" backgroundColor="#0f1923" />
+      <StatusBar barStyle="light-content" backgroundColor={COLORS.bg} />
 
       <View style={s.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -70,29 +71,29 @@ export default function SettingsScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#0f1923' },
+  root: { flex: 1, backgroundColor: COLORS.bg },
   header: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12,
   },
-  back: { fontSize: 24, color: '#6b7280', width: 32 },
-  title: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  back: { fontSize: 24, color: COLORS.textFaint, width: 32 },
+  title: { fontSize: 16, fontWeight: '700', color: COLORS.textPrimary },
   scroll: { paddingHorizontal: 20, paddingBottom: 40 },
   sectionLabel: {
-    color: '#6b7280', fontSize: 12, fontWeight: '700',
+    color: COLORS.textFaint, fontSize: 12, fontWeight: '700',
     letterSpacing: 2, marginTop: 8, marginBottom: 12,
   },
-  card: { backgroundColor: '#1e293b', borderRadius: 16, padding: 18, marginBottom: 12 },
-  cardTitle: { color: '#fff', fontSize: 15, fontWeight: '600', marginBottom: 14 },
+  card: { backgroundColor: COLORS.surface, borderRadius: 16, padding: 18, marginBottom: 12 },
+  cardTitle: { color: COLORS.textPrimary, fontSize: 15, fontWeight: '600', marginBottom: 14 },
   optionRow: { flexDirection: 'row', gap: 10, marginBottom: 12 },
   optionBtn: {
     flex: 1, alignItems: 'center', paddingVertical: 12,
-    borderRadius: 12, backgroundColor: '#0f1923',
-    borderWidth: 1, borderColor: 'rgba(255,255,255,0.06)',
+    borderRadius: 12, backgroundColor: COLORS.bg,
+    borderWidth: 1, borderColor: COLORS.borderSubtle,
   },
-  optionBtnActive: { backgroundColor: '#6d28d9', borderColor: '#6d28d9' },
-  optionLabel: { color: '#9ca3af', fontWeight: '600', fontSize: 14 },
-  optionLabelActive: { color: '#fff' },
-  cardHint: { color: '#6b7280', fontSize: 12, lineHeight: 18 },
-  note: { color: '#4b5563', fontSize: 12, lineHeight: 18, paddingHorizontal: 4 },
+  optionBtnActive: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
+  optionLabel: { color: COLORS.textMuted, fontWeight: '600', fontSize: 14 },
+  optionLabelActive: { color: COLORS.textPrimary },
+  cardHint: { color: COLORS.textFaint, fontSize: 12, lineHeight: 18 },
+  note: { color: COLORS.textFainter, fontSize: 12, lineHeight: 18, paddingHorizontal: 4 },
 });
