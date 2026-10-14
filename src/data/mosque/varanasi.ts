@@ -1,4 +1,11 @@
-export const vnsData = {
+import type { MosqueTimetable } from './types';
+
+// Varanasi local mosque timetable (curated, wall-clock IST). Includes Zawal.
+// Known gap: April 30 Midnight is an unfilled "XX:YY" placeholder in the source —
+// the parser treats it as missing rather than guessing a value.
+// Corrected: October 2 Maghrib was "05:44 AM" in the source (AM/PM typo;
+// Oct 1 is 05:45 PM and Oct 3 is 05:43 PM).
+export const varanasi: MosqueTimetable = {
 	"January": [
 		{ "Date": "01", "Fajr": "05:23 AM", "Sunrise": "06:45 AM", "Zawal": "11:21 AM", "Dhuhr": "12:01 PM", "Asr": "02:59 PM", "Maghrib": "05:19 PM", "Isha": "06:40 PM", "Midnight": "11:21 PM" },
 		{ "Date": "02", "Fajr": "05:23 AM", "Sunrise": "06:45 AM", "Zawal": "11:21 AM", "Dhuhr": "12:02 PM", "Asr": "03:00 PM", "Maghrib": "05:19 PM", "Isha": "06:41 PM", "Midnight": "11:21 PM" },
@@ -292,7 +299,7 @@ export const vnsData = {
 	],
 	"October": [
 		{ "Date": "01", "Fajr": "04:34 AM", "Sunrise": "05:51 AM", "Zawal": "11:09 AM", "Dhuhr": "11:48 AM", "Asr": "03:12 PM", "Maghrib": "05:45 PM", "Isha": "07:04 PM", "Midnight": "11:10 PM" },
-		{ "Date": "02", "Fajr": "04:34 AM", "Sunrise": "05:51 AM", "Zawal": "11:09 AM", "Dhuhr": "11:48 AM", "Asr": "03:12 PM", "Maghrib": "05:44 AM", "Isha": "07:03 PM", "Midnight": "11:09 PM" },
+		{ "Date": "02", "Fajr": "04:34 AM", "Sunrise": "05:51 AM", "Zawal": "11:09 AM", "Dhuhr": "11:48 AM", "Asr": "03:12 PM", "Maghrib": "05:44 PM", "Isha": "07:03 PM", "Midnight": "11:09 PM" },
 		{ "Date": "03", "Fajr": "04:35 AM", "Sunrise": "05:52 AM", "Zawal": "11:09 AM", "Dhuhr": "11:47 AM", "Asr": "03:11 PM", "Maghrib": "05:43 PM", "Isha": "07:02 PM", "Midnight": "11:09 PM" },
 		{ "Date": "04", "Fajr": "04:35 AM", "Sunrise": "05:52 AM", "Zawal": "11:09 AM", "Dhuhr": "11:47 AM", "Asr": "03:10 PM", "Maghrib": "05:42 PM", "Isha": "07:01 PM", "Midnight": "11:09 PM" },
 		{ "Date": "05", "Fajr": "04:35 AM", "Sunrise": "05:52 AM", "Zawal": "11:08 AM", "Dhuhr": "11:47 AM", "Asr": "03:10 PM", "Maghrib": "05:41 PM", "Isha": "06:59 PM", "Midnight": "11:08 PM" },

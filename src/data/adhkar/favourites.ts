@@ -1,7 +1,8 @@
-// src/data/adhkar.js
-// count = target repetitions per session
+import type { Dhikr } from './types';
 
-export const FAVOURITES = [
+// Curated favourites. count = target repetitions per day.
+// Missing translations are simply absent; the UI falls back to English.
+export const FAVOURITES: Dhikr[] = [
 
   // ── MORNING ─────────────────────────────────────────────────────────────────
   {
@@ -10,6 +11,7 @@ export const FAVOURITES = [
     nameAr: 'لَا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ',
     time: 'morning',
     count: 10,
+    source: "Jami' at-Tirmidhi 3474",
     arabic: 'لَا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
     translations: {
       urdu: 'اللہ کے سوا کوئی معبود نہیں، وہ اکیلا ہے، اس کا کوئی شریک نہیں، اسی کی بادشاہت ہے، اسی کی تعریفیں ہیں، وہی زندگی دیتا ہے اور وہی موت دیتا ہے، اور وہ ہر چیز پر قادر ہے۔',
@@ -34,6 +36,7 @@ export const FAVOURITES = [
     nameAr: 'سَيِّدُ الِاسْتِغْفَار',
     time: 'morning',
     count: 1,
+    source: "Sahih al-Bukhari 6306",
     arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',
     translations: {
       urdu: 'اے اللہ! تو ہی میرا رب ہے، تیرے سوا کوئی معبود نہیں۔ تو نے ہی مجھے پیدا کیا اور میں تیرا بندہ ہوں ۔ میں اپنی استطاعت کے مطابق تیرے عہد اور وعدے پر قائم ہوں۔ میں اپنے کیے کاموں کے شر (برے نتیجے) سے تیری پناہ مانگتا ہوں۔ میں تیرے سامنے تیری ان نعمتوں کا اقرار کرتا ہوں جو تو نے مجھ پر کی ہیں اور میں اپنے گناہوں کا اعتراف کرتا ہوں، پس مجھے معاف کر دے کیونکہ تیرے سوا کوئی گناہوں کو معاف نہیں کر سکتا۔',
@@ -58,6 +61,7 @@ export const FAVOURITES = [
     nameAr: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ',
     time: 'morning',
     count: 3,
+    source: "Sahih Muslim 2726",
     arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ',
     translations: {
       urdu: 'اللہ پاک ہے اور اس کی حمد ہے، اس کی مخلوق کی تعداد کے برابر، اس کی ذات کی خوشنودی کے برابر، اس کے عرش کے وزن کے برابر، اور اس کے کلمات کی روشنائی کے برابر۔',
@@ -82,6 +86,7 @@ export const FAVOURITES = [
     nameAr: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
     time: 'morning',
     count: 100,
+    source: "Sahih Muslim 2692",
     arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
     translations: {
       urdu: 'اللہ پاک ہے اور حمد اسی کے لیے ہے۔',
@@ -90,12 +95,10 @@ export const FAVOURITES = [
     },
     virtue: {
       urdu: 'گناہ معاف — چاہے سمندر کی جھاگ کے برابر ہوں (بخاری 6405)۔ زبان پر ہلکا، میزان میں بھاری، اور رحمٰن کو سب سے زیادہ محبوب (بخاری 6406 — متفق علیہ)۔',
-      hindi: '// TODO',
+      hindi: "गुनाह माफ़ — चाहे समुंदर की झाग के बराबर हों (बुख़ारी 6405)। ज़बान पर हल्का, मीज़ान में भारी, और रहमान को सबसे ज़्यादा महबूब (बुख़ारी 6406 — मुत्तफ़क़ अलैह)।",
       english: 'Sins forgiven even if they were as much as the foam of the sea (Bukhari 6405). Light on the tongue, heavy in the scales, and most beloved to the Most Merciful (Bukhari 6406 — Muttafaqun ʿalayh).',
     },
     hadith: {
-      urdu: '// TODO',
-      hindi: '// TODO',
       english: 'Narrated by Abu Hurairah (رضي الله عنه): The Prophet ﷺ said: "He who recites سُبْحَانَ اللَّهِ وَبِحَمْدِهِ in the morning and in the evening one hundred times will not bring on the Day of Resurrection anything more excellent than this, except one who utters these words or more." (Sahih Muslim 2692)\n\nAlso: "Whoever says it 100 times a day, his sins will be forgiven even if they were as much as the foam of the sea." (Sahih al-Bukhari 6405)\n\nAlso: "There are two expressions which are very easy for the tongue to say, but very heavy in the scales, and most beloved to the Most Merciful: سُبْحَانَ اللَّهِ الْعَظِيمِ and سُبْحَانَ اللَّهِ وَبِحَمْدِهِ." (Sahih al-Bukhari 6406 — Muttafaqun \'alayh)',
     },
   },
@@ -106,6 +109,7 @@ export const FAVOURITES = [
     nameAr: 'سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ',
     time: 'morning',
     count: 100,
+    source: "Sunan Abi Dawud 5091",
     arabic: 'سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ',
     translations: {
       urdu: 'اللہ پاک ہے، بہت عظمت والا ہے اور تمام تعریفیں اسی کے لیے ہیں ۔',
@@ -114,12 +118,10 @@ export const FAVOURITES = [
     },
     virtue: {
       urdu: 'جو شخص یہ صبح ۱۰۰ مرتبہ اور شام ۱۰۰ مرتبہ کہے — قیامت کے دن اس سے بڑھ کر کوئی چیز لے کر کوئی نہیں آ سکتا۔',
-      hindi: '// TODO',
+      hindi: "जो शख़्स यह सुबह 100 मर्तबा और शाम 100 मर्तबा कहे — क़ियामत के दिन उससे बढ़कर कोई चीज़ लेकर कोई नहीं आ सकता।",
       english: 'Whoever says this 100 times in the morning and 100 times in the evening — no one from all of creation will bring anything equal to what he will bring on the Day of Resurrection.',
     },
     hadith: {
-      urdu: '// TODO',
-      hindi: '// TODO',
       english: 'Narrated by Abu Hurairah (رضي الله عنه): The Messenger of Allah ﷺ said: "Whoever says in the morning سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ one hundred times, and likewise in the evening, no one from all of creation will bring anything equal to what he will bring." (Sunan Abi Dawud 5091 — Sahih, authenticated by Al-Albani)',
     },
   },
@@ -130,6 +132,7 @@ export const FAVOURITES = [
     nameAr: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ',
     time: 'morning',
     count: 100,
+    source: "Sahih Muslim 2693",
     arabic: 'لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
     translations: {
       urdu: 'اللہ کے سوا کوئی معبود نہیں، وہ اکیلا ہے، اس کا کوئی شریک نہیں، اسی کی بادشاہت ہے، اسی کی تعریفیں ہیں، اور وہ ہر چیز پر قادر ہے۔',
@@ -138,12 +141,10 @@ export const FAVOURITES = [
     },
     virtue: {
       urdu: '۱۰۰ مرتبہ کہنا دس غلام آزاد کرنے کے برابر، ۱۰۰ نیکیاں لکھی جاتی ہیں، ۱۰۰ گناہ مٹائے جاتے ہیں، اور شام تک شیطان سے حفاظت ہوتی ہے۔',
-      hindi: '// TODO',
+      hindi: "100 मर्तबा कहना दस ग़ुलाम आज़ाद करने के बराबर, 100 नेकियाँ लिखी जाती हैं, 100 गुनाह मिटाए जाते हैं, और शाम तक शैतान से हिफ़ाज़त होती है।",
       english: 'Saying this 100 times is equivalent to freeing 10 slaves, earns 100 good deeds, wipes away 100 sins, and is a protection from Shaytan for the entire day until evening.',
     },
     hadith: {
-      urdu: '// TODO',
-      hindi: '// TODO',
       english: 'Narrated by Abu Hurairah (رضي الله عنه): The Messenger of Allah ﷺ said: "He who says لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ one hundred times a day: it is equivalent to him having freed ten slaves, one hundred good deeds are recorded for him, one hundred sins are wiped away, and it is a protection against Shaytan for that day until evening. No one can bring anything more excellent except one who does more than this." (Sahih Muslim 2693)',
     },
   },
@@ -156,6 +157,7 @@ export const FAVOURITES = [
     nameAr: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ',
     time: 'any',
     count: 100,
+    source: "Sahih al-Bukhari 6682",
     arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ',
     translations: {
       urdu: 'اللہ پاک ہے اور حمد اسی کے لیے ہے۔اللہ پاک ہے اور وہ بہت عظمت والا ہے۔',
@@ -164,12 +166,10 @@ export const FAVOURITES = [
     },
     virtue: {
       urdu: 'اللہ کو سب سے زیادہ پسند دو کلمے — زبان پر ہلکے، قیامت کے دن میزان میں بھاری۔ (صحیح بخاری 6406، متفق علیہ)',
-      hindi: '// TODO',
+      hindi: "अल्लाह को सबसे ज़्यादा पसंद दो कलिमे — ज़बान पर हल्के, क़ियामत के दिन मीज़ान में भारी। (सहीह बुख़ारी 6406, मुत्तफ़क़ अलैह)",
       english: 'The two most beloved phrases to Allah — light on the tongue but heavy in the scale on the Day of Resurrection. (Sahih al-Bukhari 6406, Muttafaqun ʿalayh)',
     },
     hadith: {
-      urdu: '// TODO',
-      hindi: '// TODO',
       english: 'Narrated by Abu Hurairah (رضي الله عنه): The Prophet ﷺ said: "There are two expressions which are very easy for the tongue to say, but very heavy in the scales, and most beloved to the Most Merciful (Allah): سُبْحَانَ اللَّهِ الْعَظِيمِ and سُبْحَانَ اللَّهِ وَبِحَمْدِهِ." (Sahih al-Bukhari 6682 — Muttafaqun \'alayh)',
     },
   },
@@ -182,6 +182,7 @@ export const FAVOURITES = [
     nameAr: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
     time: 'evening',
     count: 100,
+    source: "Sahih Muslim 2692",
     arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
     translations: {
       urdu: 'اللہ پاک ہے اور حمد اسی کے لیے ہے۔',
@@ -190,12 +191,10 @@ export const FAVOURITES = [
     },
     virtue: {
       urdu: 'گناہ معاف — چاہے سمندر کی جھاگ کے برابر ہوں (بخاری 6405)۔ زبان پر ہلکا، میزان میں بھاری، اور رحمٰن کو سب سے زیادہ محبوب (بخاری 6406 — متفق علیہ)۔',
-      hindi: '// TODO',
+      hindi: "गुनाह माफ़ — चाहे समुंदर की झाग के बराबर हों (बुख़ारी 6405)। ज़बान पर हल्का, मीज़ान में भारी, और रहमान को सबसे ज़्यादा महबूब (बुख़ारी 6406 — मुत्तफ़क़ अलैह)।",
       english: 'Sins forgiven even if they were as much as the foam of the sea (Bukhari 6405). Light on the tongue, heavy in the scales, and most beloved to the Most Merciful (Bukhari 6406 — Muttafaqun ʿalayh).',
     },
     hadith: {
-      urdu: '// TODO',
-      hindi: '// TODO',
       english: 'Narrated by Abu Hurairah (رضي الله عنه): The Prophet ﷺ said: "He who recites سُبْحَانَ اللَّهِ وَبِحَمْدِهِ in the morning and in the evening one hundred times will not bring on the Day of Resurrection anything more excellent than this, except one who utters these words or more." (Sahih Muslim 2692)\n\nAlso: "Whoever says it 100 times a day, his sins will be forgiven even if they were as much as the foam of the sea." (Sahih al-Bukhari 6405)\n\nAlso: "There are two expressions which are very easy for the tongue to say, but very heavy in the scales, and most beloved to the Most Merciful: سُبْحَانَ اللَّهِ الْعَظِيمِ and سُبْحَانَ اللَّهِ وَبِحَمْدِهِ." (Sahih al-Bukhari 6406 — Muttafaqun \'alayh)',
     },
   },
@@ -206,6 +205,7 @@ export const FAVOURITES = [
     nameAr: 'سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ',
     time: 'evening',
     count: 100,
+    source: "Sunan Abi Dawud 5091",
     arabic: 'سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ',
     translations: {
       urdu: 'اللہ پاک ہے، بہت عظمت والا ہے اور تمام تعریفیں اسی کے لیے ہیں ۔',
@@ -214,12 +214,10 @@ export const FAVOURITES = [
     },
     virtue: {
       urdu: 'جو شخص یہ صبح ۱۰۰ مرتبہ اور شام ۱۰۰ مرتبہ کہے — قیامت کے دن اس سے بڑھ کر کوئی چیز لے کر کوئی نہیں آ سکتا۔',
-      hindi: '// TODO',
+      hindi: "जो शख़्स यह सुबह 100 मर्तबा और शाम 100 मर्तबा कहे — क़ियामत के दिन उससे बढ़कर कोई चीज़ लेकर कोई नहीं आ सकता।",
       english: 'Whoever says this 100 times in the morning and 100 times in the evening — no one from all of creation will bring anything equal to what he will bring on the Day of Resurrection.',
     },
     hadith: {
-      urdu: '// TODO',
-      hindi: '// TODO',
       english: 'Narrated by Abu Hurairah (رضي الله عنه): The Messenger of Allah ﷺ said: "Whoever says in the morning سُبْحَانَ اللَّهِ الْعَظِيمِ وَبِحَمْدِهِ one hundred times, and likewise in the evening, no one from all of creation will bring anything equal to what he will bring." (Sunan Abi Dawud 5091 — Sahih, authenticated by Al-Albani)',
     },
   },
@@ -230,6 +228,7 @@ export const FAVOURITES = [
     nameAr: 'لَا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ',
     time: 'evening',
     count: 10,
+    source: "Jami' at-Tirmidhi 3534",
     arabic: 'لَا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
     translations: {
       urdu: 'اللہ کے سوا کوئی معبود نہیں، وہ اکیلا ہے، اس کا کوئی شریک نہیں، اسی کی بادشاہت ہے، اسی کی تعریفیں ہیں، وہی زندگی دیتا ہے اور وہی موت دیتا ہے، اور وہ ہر چیز پر قادر ہے۔',
@@ -238,12 +237,12 @@ export const FAVOURITES = [
     },
     virtue: {
       urdu: 'مغرب کے فوراً بعد دس مرتبہ: اللہ محافظ فرشتے بھیجتا ہے جو صبح تک شیطان سے بچاتے ہیں، ۱۰ پکی نیکیاں لکھی جاتی ہیں، ۱۰ ہلاکت خیز گناہ مٹائے جاتے ہیں، اور دس مومن غلام آزاد کرنے کے برابر ثواب ملتا ہے۔',
-      hindi: 'फ़ज्र के फ़ौरन बाद (बिना बात किये): 10 नेकियाँ लिखी जाती हैं, 10 गुनाह माफ़ किये जाते हैं, 10 दर्जा बुलंद किया जाता है , उस दिन हर बुरी चीज़ और शैतान से उसकी हिफाज़त होती है — उस दिन शिर्क के सिवा कोई गुनाह उसे नुक़सान नहीं पहुँचा सकता।',
+      hindi: "मग़रिब के फ़ौरन बाद दस मर्तबा: अल्लाह मुहाफ़िज़ फ़रिश्ते भेजता है जो सुबह तक शैतान से बचाते हैं, 10 पक्की नेकियाँ लिखी जाती हैं, 10 हलाकत-ख़ेज़ गुनाह मिटाए जाते हैं, और दस मोमिन ग़ुलाम आज़ाद करने के बराबर सवाब मिलता है।",
       english: 'Recite 10 times right after Maghrib: Allah sends guardian angels to protect you from Shaytan until morning, records 10 decisive good deeds, wipes 10 destructive sins, and it is equivalent to freeing 10 believing slaves.',
     },
     hadith: {
       urdu: 'جو شخص مغرب کی نماز کے فوراً بعد یہی کلمات دس مرتبہ کہے — تو اللہ اُس کے لیے محافظ فرشتے بھیجتا ہے جو صبح تک اُسے شیطان سے بچاتے ہیں، اور اللہ اُس کے لیے دس پکی نیکیاں لکھتا ہے، اُس کے دس ہلاکت خیز گناہ مٹا دیتا ہے، اور یہ عمل دس مومن غلام آزاد کرنے کے برابر ہوتا ہے۔ (جامع الترمذی 3534)',
-      hindi: 'रसूलुल्लाह ﷺ ने फ़रमाया: "जो शख़्स नमाज़-ए-फ़ज्र के बाद जब कि वह अपने पैर मोड़े (दो ज़ानू/तशह्हुद की हालत में) बैठा हुआ हो और कोई बात भी न की हो: «ला इलाहा इल्लल्लाहु वहदहू ला शरीका लहू, लहुल मुल्कु व लहुल हम्दु, युह्यी व युमीतु, व हुवा अला कुल्लि शयइन् क़दीर» दस मर्तबा पढ़े, तो उसके लिए दस नेकियां लिखी जाएंगी, और उसकी दस बुराइयां (गुनाह) मिटा दी जाएंगी, उसके लिए दस दर्जे बुलंद किए जाएंगे और वह उस दिन पूरे दिन भर हर तरह की मकरूह (नापसंदीदा) चीज़ से महफ़ूज़ (सुरक्षित) रहेगा, और शैतान के ज़ेर-ए-असर न आ पाने के लिए उसकी निगहबानी (हिफ़ाज़त) की जाएगी, और कोई गुनाह उसे उस दिन सिवाय शिर्क बिल्लाह (अल्लाह के साथ शिर्क करने) के हलाकत (तबाही) से दोचार नहीं कर सकेगा।',
+      hindi: "जो शख़्स मग़रिब की नमाज़ के फ़ौरन बाद यही कलिमात दस मर्तबा कहे — तो अल्लाह उसके लिए मुहाफ़िज़ फ़रिश्ते भेजता है जो सुबह तक उसे शैतान से बचाते हैं, और अल्लाह उसके लिए दस पक्की नेकियाँ लिखता है, उसके दस हलाकत-ख़ेज़ गुनाह मिटा देता है, और यह अमल दस मोमिन ग़ुलाम आज़ाद करने के बराबर होता है। (जामे अत-तिर्मिज़ी 3534)",
       english: 'Narrated by \'Umarah bin Shabib al-Saba\'i: The Messenger of Allah ﷺ said: "Whoever says لَا إِلَهَ إِلاَّ اللَّهُ وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ ten times right after Maghrib — Allah sends guardians to protect him from Shaytan until morning, records ten decisive good deeds for him, wipes away ten destructive sins, and it is equivalent to freeing ten believing slaves." (Jami\' al-Tirmidhi 3534)',
     },
   },
@@ -254,6 +253,7 @@ export const FAVOURITES = [
     nameAr: 'سَيِّدُ الِاسْتِغْفَار',
     time: 'evening',
     count: 1,
+    source: "Sahih al-Bukhari 6306",
     arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',
     translations: {
       urdu: 'اے اللہ! تو ہی میرا رب ہے، تیرے سوا کوئی معبود نہیں۔ تو نے ہی مجھے پیدا کیا اور میں تیرا بندہ ہوں ۔ میں اپنی استطاعت کے مطابق تیرے عہد اور وعدے پر قائم ہوں۔ میں اپنے کیے کاموں کے شر (برے نتیجے) سے تیری پناہ مانگتا ہوں۔ میں تیرے سامنے تیری ان نعمتوں کا اقرار کرتا ہوں جو تو نے مجھ پر کی ہیں اور میں اپنے گناہوں کا اعتراف کرتا ہوں، پس مجھے معاف کر دے کیونکہ تیرے سوا کوئی گناہوں کو معاف نہیں کر سکتا۔',
@@ -274,6 +274,3 @@ export const FAVOURITES = [
 
 ];
 
-export const OTHERS = [
-  // Add more adhkar here later
-];
