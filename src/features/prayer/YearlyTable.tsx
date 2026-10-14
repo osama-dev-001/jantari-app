@@ -39,7 +39,6 @@ export function YearlyTable() {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [height, setHeight] = useState(0);
   const list = useRef<FlatList<Row>>(null);
-  const didAutoScroll = useRef(false);
 
   // Zawal only appears for cities whose timetable has it.
   const columns = useMemo<PrayerKey[]>(() => {
@@ -87,17 +86,9 @@ export function YearlyTable() {
     [todayIndex],
   );
 
-  useEffect(() => {
-    if (rows && !didAutoScroll.current && todayIndex >= 0 && height > 0) {
-      didAutoScroll.current = true;
-      requestAnimationFrame(() => scrollToToday(false));
-    }
-  }, [rows, todayIndex, height, scrollToToday]);
-
   const pickQuarter = (q: Quarter) => {
     if (q === shownQuarter) return;
     setShownQuarter(q);
-    didAutoScroll.current = false;
     setQuarter(q);
   };
 
@@ -231,6 +222,10 @@ export function YearlyTable() {
               </View>
               <FlatList
                 ref={list}
+                // Remounts per quarter and opens on today (a few rows of context above),
+                // instead of rendering January first and then scrolling.
+                key={quarter}
+                initialScrollIndex={todayIndex >= 0 ? Math.max(0, todayIndex - 4) : undefined}
                 data={rows}
                 keyExtractor={r => r.key}
                 renderItem={renderItem}
