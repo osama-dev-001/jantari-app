@@ -1,6 +1,6 @@
 {
   "name": "JantariApp",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -22,7 +22,8 @@
     "react-native-bootsplash": "^7.3.1",
     "react-native-gesture-handler": "^3.0.0",
     "react-native-safe-area-context": "^5.8.0",
-    "react-native-screens": "^4.25.2"
+    "react-native-screens": "^4.25.2",
+    "react-native-svg": "^15.15.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

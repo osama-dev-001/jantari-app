@@ -26,7 +26,7 @@
         <receiver
             android:name=".widget.Jantari"
             android:exported="true"
-            android:label="Jantari Widget">
+            android:label="Prayer Times">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
