@@ -36,7 +36,7 @@ type ScreenProps = {
   footer?: React.ReactNode;
 };
 
-export function Screen({ children, scroll = true, contentStyle, header, footer }: ScreenProps) {
+export function Screen({ children, scroll = true, contentStyle, header, footer, refreshControl }: ScreenProps) {
   const c = useTheme();
   const insets = useSafeAreaInsets();
   return (
@@ -48,6 +48,7 @@ export function Screen({ children, scroll = true, contentStyle, header, footer }
         <ScrollView
           contentContainerStyle={[{ paddingHorizontal: GUTTER, paddingTop: 8, paddingBottom: 32 }, contentStyle]}
           showsVerticalScrollIndicator={false}
+          refreshControl={refreshControl}
         >
           {children}
         </ScrollView>

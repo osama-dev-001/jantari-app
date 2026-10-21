@@ -1,9 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { buildReminderPlan, todaySlot, type Progress, type WindowKind } from '../core/reminders';
 import { ymdAt, ymdKey } from '../core/time';
-import { FAVOURITES } from '../data/adhkar';
 import { getCity } from '../data/cities';
 import { nativeReminders } from '../native/reminders';
+import { getAdhkarLibrary } from './adhkarLibrary';
 import { dhikrStore } from './progress';
 import { calcOptionsOf, settingsStore } from './settings';
 
@@ -11,7 +11,7 @@ const SYNCED_AT = 'v2:reminders-synced-at';
 
 /** "Done" means every Favourite for that time of day is complete (as on the Today screen). */
 function progressFor(dayKey: string, kind: WindowKind): Progress {
-  const items = FAVOURITES.filter(d => d.time === kind);
+  const items = getAdhkarLibrary().favourites.filter(d => d.time === kind);
   const counts = dhikrStore.get()[dayKey] ?? {};
   return { done: items.filter(d => (counts[d.id] ?? 0) >= d.count).length, total: items.length };
 }

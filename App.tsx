@@ -4,6 +4,7 @@ import BootSplash from 'react-native-bootsplash';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/app/navigation';
+import { adhkarCache, refreshAdhkar } from './src/store/adhkarLibrary';
 import { flushAllStores } from './src/store/persisted';
 import { dhikrStore, tasbihStore, trackerStore } from './src/store/progress';
 import { syncReminders } from './src/store/reminderSync';
@@ -20,17 +21,24 @@ function BackgroundSync() {
     syncReminders().catch(() => {});
   }, [settings]);
 
-  // Progress changes the reminder text and can end a window early; batch rapid taps.
+  // Progress (and a new adhkar list from the server) changes reminder text and
+  // can end a window early; batch rapid taps.
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const unsubscribe = dhikrStore.subscribe(() => {
+    const resync = () => {
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => syncReminders().catch(() => {}), 3000);
-    });
+    };
+    const unsubscribers = [dhikrStore.subscribe(resync), adhkarCache.subscribe(resync)];
     return () => {
-      unsubscribe();
+      unsubscribers.forEach(u => u());
       if (timer) clearTimeout(timer);
     };
+  }, []);
+
+  // Fetch the latest adhkar when online: at launch, then on return (throttled).
+  useEffect(() => {
+    refreshAdhkar();
   }, []);
 
   useEffect(() => {
@@ -41,6 +49,8 @@ function BackgroundSync() {
       if (s !== 'active') {
         flushAllStores();
         refreshWidgets();
+      } else {
+        refreshAdhkar();
       }
       syncReminders().catch(() => {});
     });
@@ -57,7 +67,9 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    Promise.all([settingsStore.load(), dhikrStore.load(), trackerStore.load(), tasbihStore.load()]).finally(() => setReady(true));
+    Promise.all([settingsStore.load(), dhikrStore.load(), trackerStore.load(), tasbihStore.load(), adhkarCache.load()]).finally(() =>
+      setReady(true),
+    );
   }, []);
 
   useEffect(() => {

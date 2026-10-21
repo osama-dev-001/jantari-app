@@ -16,6 +16,9 @@ English throughout. No internet needed.
 - **Cities** — Varanasi and Ahmedabad use curated local-mosque timetables; ~60 more
   cities across India, Pakistan, Bangladesh, Nepal, Sri Lanka, the Gulf and Malaysia
   are calculated on the phone with [Adhan](https://github.com/batoulapps/adhan-js).
+- **Online adhkar** — when a Supabase project is configured, the adhkar list is downloaded
+  and cached, so edits in the database reach phones without a new build (see
+  [supabase/README.md](supabase/README.md)). Offline it uses the last download or the built-in list.
 - **Reminders** — optional notifications during the morning (Fajr → Zawal) and evening
   (Asr → Isha) adhkar times: hourly, then every 10 minutes near the end, stopping once done;
   plus optional prayer-time alerts. All intervals are adjustable. Works offline, survives reboots.

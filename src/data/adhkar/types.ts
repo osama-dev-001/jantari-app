@@ -23,3 +23,8 @@ export type Dhikr = {
   source?: string;
   segments?: DhikrSegment[];
 };
+
+/** The two tabs on the Dhikr screen. */
+export type DhikrListKey = 'favourites' | 'others';
+
+export type AdhkarLibrary = Record<DhikrListKey, Dhikr[]>;

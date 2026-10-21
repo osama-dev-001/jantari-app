@@ -1,12 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 import type { RootNav } from '../../app/navigation';
 import { formatHijri } from '../../core/hijri';
 import { isMosqueCity, METHOD_KEYS, METHOD_NAMES, methodDetail, resolveMethod } from '../../core/prayer/engine';
 import type { MethodSetting } from '../../core/prayer/types';
 import { LANGS, type Lang } from '../../data/adhkar';
+import { formatClock, formatShortDate, ymdAt } from '../../core/time';
 import { hijriNow, useCity, useNow, usePrayerState } from '../../hooks';
+import { refreshAdhkar, remoteConfigured, useAdhkarCheckStatus, useAdhkarLibrary, type CheckStatus } from '../../store/adhkarLibrary';
 import { updateSettings, useSettings, type ReminderSettings, type ThemeMode } from '../../store/settings';
 import { ACCENT_OPTIONS, buildPalette } from '../../theme/palette';
 import { ARABIC_FONTS, URDU_FONTS } from '../../theme/scripts';
@@ -165,6 +167,8 @@ export function SettingsScreen() {
       </Block>
 
       <Block title="Dhikr">
+        <LibraryRow />
+        <Divider />
         <View style={{ paddingVertical: 12 }}>
           <AppText variant="bodyStrong" style={{ marginBottom: 8 }}>
             Translation language
@@ -201,6 +205,41 @@ export function SettingsScreen() {
 
       <MethodSheet visible={pickMethod} onClose={() => setPickMethod(false)} />
     </Screen>
+  );
+}
+
+const CHECK_NOTE: Partial<Record<CheckStatus['state'], string>> = {
+  checking: 'Checking for updates…',
+  updated: 'Just updated',
+  unchanged: 'Up to date',
+  offline: 'Offline — will check again when connected',
+};
+
+/** Where the adhkar come from (online library or built-in), with a manual "check now". */
+function LibraryRow() {
+  const c = useTheme();
+  const s = useSettings();
+  const city = useCity();
+  const lib = useAdhkarLibrary();
+  const check = useAdhkarCheckStatus();
+  const total = lib.favourites.length + lib.others.length;
+  const when = (t: number) => `${formatShortDate(ymdAt(t, city.tzOffsetMin))}, ${formatClock(t, city.tzOffsetMin, { format: s.timeFormat })}`;
+
+  if (!remoteConfigured()) {
+    return <Row icon="book-open" title="Adhkar library" subtitle={`Built-in · ${total} adhkar`} />;
+  }
+  const base =
+    lib.source === 'remote' && lib.fetchedAt ? `Online · ${total} adhkar · updated ${when(lib.fetchedAt)}` : `Built-in · ${total} adhkar`;
+  const extra =
+    check.state === 'empty' ? check.message : check.state === 'error' ? `Couldn't check: ${check.message}` : CHECK_NOTE[check.state];
+  return (
+    <Row
+      icon="book-open"
+      title="Adhkar library"
+      subtitle={extra ? `${base}\n${extra}` : base}
+      onPress={() => refreshAdhkar({ force: true })}
+      right={check.state === 'checking' ? <ActivityIndicator size="small" color={c.accent} /> : <Icon name="refresh-cw" size={17} color={c.textFaint} />}
+    />
   );
 }
 

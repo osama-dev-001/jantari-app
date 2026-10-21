@@ -1,8 +1,10 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 import type { RootNav } from '../../app/navigation';
-import { FAVOURITES, OTHERS, TIME_META, groupByTime, type Dhikr } from '../../data/adhkar';
+import { TIME_META, groupByTime, type Dhikr } from '../../data/adhkar';
+import type { AdhkarLibrary, DhikrListKey } from '../../data/adhkar/types';
+import { refreshAdhkar, remoteConfigured, useAdhkarCheckStatus, useAdhkarLibrary } from '../../store/adhkarLibrary';
 import { useCityToday, useFocusedNow } from '../../hooks';
 import { useDhikrDay } from '../../store/progress';
 import { useScripts, useTheme } from '../../theme/ThemeProvider';
@@ -12,12 +14,11 @@ import { Icon } from '../../ui/Icon';
 import { GUTTER, Screen, ScreenTitle } from '../../ui/layout';
 import { AppText, Card, IconButton, PressableScale, Segmented } from '../../ui/primitives';
 
-export type DhikrListKey = 'favourites' | 'others';
-export const DHIKR_LISTS: Record<DhikrListKey, Dhikr[]> = { favourites: FAVOURITES, others: OTHERS };
+export type { DhikrListKey };
 
 /** The order items are shown in (grouped by time) — also the swipe order in the counter. */
-export function orderedList(key: DhikrListKey): Dhikr[] {
-  return groupByTime(DHIKR_LISTS[key]).flatMap(g => g.items);
+export function orderedList(lib: AdhkarLibrary, key: DhikrListKey): Dhikr[] {
+  return groupByTime(lib[key]).flatMap(g => g.items);
 }
 
 export function DhikrListScreen() {
@@ -28,8 +29,10 @@ export function DhikrListScreen() {
   const today = useCityToday(now);
   const counts = useDhikrDay(today.key);
   const [tab, setTab] = useState<DhikrListKey>('favourites');
-  const groups = useMemo(() => groupByTime(DHIKR_LISTS[tab]), [tab]);
-  const list = DHIKR_LISTS[tab];
+  const lib = useAdhkarLibrary();
+  const check = useAdhkarCheckStatus();
+  const groups = useMemo(() => groupByTime(lib[tab]), [lib, tab]);
+  const list = lib[tab];
   const done = list.filter(d => (counts[d.id] ?? 0) >= d.count).length;
 
   const header = (
@@ -56,7 +59,19 @@ export function DhikrListScreen() {
   );
 
   return (
-    <Screen header={header}>
+    <Screen
+      header={header}
+      refreshControl={
+        remoteConfigured() ? (
+          <RefreshControl
+            refreshing={check.state === 'checking'}
+            onRefresh={() => refreshAdhkar({ force: true })}
+            colors={[c.accent]}
+            progressBackgroundColor={c.surface}
+          />
+        ) : undefined
+      }
+    >
       <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, marginBottom: 18, marginTop: 6 }}>
         <ProgressRing size={48} stroke={4} progress={list.length ? done / list.length : 0} color={c.accent} track={c.surfaceSunk}>
           <AppText variant="label" tone={done === list.length ? 'accent' : 'text'}>
@@ -71,6 +86,12 @@ export function DhikrListScreen() {
         </View>
         {done === list.length && list.length > 0 && <Icon name="circle-check" size={24} color={c.accent} />}
       </Card>
+
+      {list.length === 0 && (
+        <AppText tone="muted" style={{ textAlign: 'center', paddingVertical: 40 }}>
+          No adhkar in this list yet.
+        </AppText>
+      )}
 
       {groups.map(({ time, items }) => {
         const groupDone = items.filter(d => (counts[d.id] ?? 0) >= d.count).length;

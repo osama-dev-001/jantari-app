@@ -15,22 +15,21 @@ import { Icon } from '../../ui/Icon';
 import { GUTTER, Sheet, ThemedStatusBar } from '../../ui/layout';
 import { AppText, Card, IconButton, Pill, PressableScale, Segmented } from '../../ui/primitives';
 import { orderedList } from './DhikrListScreen';
+import { useAdhkarLibrary } from '../../store/adhkarLibrary';
+import { SubScreen } from '../settings/parts';
 
 const SCALES = [1, 1.15, 1.3, 0.9];
 
-export function DhikrCounterScreen() {
+function CounterView({ items, initialId }: { items: Dhikr[]; initialId: string }) {
   const c = useTheme();
   const nav = useNavigation<RootNav>();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const { params } = useRoute<RouteProp<RootStackParams, 'DhikrCounter'>>();
-  const items = useMemo(() => orderedList(params.list), [params.list]);
-  const [index, setIndex] = useState(() =>
-    Math.max(
-      0,
-      items.findIndex(d => d.id === params.id),
-    ),
-  );
+  // Tracked by id, not position, so a list refreshed from the server mid-session
+  // keeps showing the same dhikr.
+  const [currentId, setCurrentId] = useState(initialId);
+  const found = items.findIndex(d => d.id === currentId);
+  const index = found >= 0 ? found : 0;
   const item = items[index];
 
   const now = useFocusedNow(60_000);
@@ -43,7 +42,10 @@ export function DhikrCounterScreen() {
   const settings = useSettings();
   const [sheet, setSheet] = useState<'virtue' | 'hadith' | null>(null);
 
-  const go = (dir: 1 | -1) => setIndex(i => Math.min(items.length - 1, Math.max(0, i + dir)));
+  const go = (dir: 1 | -1) => {
+    const next = items[Math.min(items.length - 1, Math.max(0, index + dir))];
+    if (next) setCurrentId(next.id);
+  };
   const goRef = useRef(go);
   goRef.current = go;
 
@@ -245,6 +247,22 @@ export function DhikrCounterScreen() {
       </View>
     </GestureDetector>
   );
+}
+
+export function DhikrCounterScreen() {
+  const { params } = useRoute<RouteProp<RootStackParams, 'DhikrCounter'>>();
+  const lib = useAdhkarLibrary();
+  const items = useMemo(() => orderedList(lib, params.list), [lib, params.list]);
+  if (!items.length) {
+    return (
+      <SubScreen title="Dhikr">
+        <AppText tone="muted" style={{ textAlign: 'center', paddingVertical: 40 }}>
+          This list has no adhkar right now.
+        </AppText>
+      </SubScreen>
+    );
+  }
+  return <CounterView items={items} initialId={params.id} />;
 }
 
 function NavButton({ dir, item, onPress, highlight }: { dir: 1 | -1; item?: Dhikr; onPress: () => void; highlight?: boolean }) {

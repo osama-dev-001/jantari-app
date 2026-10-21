@@ -15,7 +15,9 @@ src/core/               pure logic, no React Native imports — unit tested
   prayer/engine.ts      day times (mosque timetable → Adhan fallback), current/next, year table
   hijri.ts  qibla.ts    tabular Hijri calendar (+ user offset), great-circle bearing
   reminders.ts          plans adhkar/prayer notifications (pure)
-src/data/               cities.ts, mosque/{varanasi,ahmedabad}.ts, adhkar/{favourites,others}.ts
+src/data/               cities.ts, mosque/{varanasi,ahmedabad}.ts, adhkar/{favourites,others}.ts (bundled), adhkar/remote.ts (DB row mapping)
+src/config/remote.ts    Supabase URL + anon key for the online adhkar library
+supabase/               table migration, seed CSV/SQL, setup guide (supabase/README.md)
 src/store/              persisted stores (AsyncStorage JSON, debounced) + v1 migration
 src/theme/              palette (Night/Day × 4 accents), typography, scripts (Arabic/Urdu fonts), ThemeProvider
 src/native/             JS wrappers for the app's own Kotlin modules
@@ -49,6 +51,16 @@ src/widget/             model.ts (pure), PrayerWidget.tsx (RemoteViews), taskHan
 v1 keys are left in place, so rolling back to v1 still works. Dhikr/tracker days follow
 the selected city's calendar date. Increments read the store's current value
 (`incrementDhikr`), so taps landing before a re-render are never lost.
+
+## Online adhkar library
+
+Adhkar come from the Supabase table `public.daily_adhkar` when online (`store/adhkarLibrary.ts`):
+fetched at launch, on foreground (throttled to 15 min) and on pull-to-refresh. The raw rows are
+cached in `v2:adhkar-remote` and re-validated on load (`data/adhkar/remote.ts`). Precedence: cached
+download with ≥1 valid row → bundled `favourites.ts` / `others.ts`. An empty table, network errors
+and invalid rows never replace what the user has. Screens read the library via `useAdhkarLibrary()`
+/ `getAdhkarLibrary()` — never import FAVOURITES/OTHERS directly outside the store. RLS: anon may
+only `select` active rows. `npm run export:adhkar` regenerates `supabase/seed/*` from the bundled data.
 
 ## Reminders (v2.1)
 

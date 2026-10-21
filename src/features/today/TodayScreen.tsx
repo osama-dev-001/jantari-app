@@ -5,7 +5,8 @@ import { periodProgress } from '../../core/prayer/engine';
 import { FARD, PRAYER_META, type PrayerKey } from '../../core/prayer/types';
 import { formatHijri, formatHijriUrdu, isRamadan, notableDay } from '../../core/hijri';
 import { formatClock, formatCountdown, formatLongDate, ymdKey, type YMD } from '../../core/time';
-import { FAVOURITES, TIME_META, type DhikrTime } from '../../data/adhkar';
+import { TIME_META, type DhikrTime } from '../../data/adhkar';
+import { useAdhkarLibrary } from '../../store/adhkarLibrary';
 import { haptics, hijriNow, useCityToday, useFocusedNow, usePrayerState } from '../../hooks';
 import type { RootNav } from '../../app/navigation';
 import { countPrayed, isPrayed, lastNDays, togglePrayed, trackerStreak, useDhikrDay, useTasbih, useTracker } from '../../store/progress';
@@ -281,14 +282,15 @@ function FastingCard({ ramadan, now, fmt }: { ramadan: boolean; now: number; fmt
 function DhikrSummary({ dayKey, onOpen }: { dayKey: string; onOpen: () => void }) {
   const c = useTheme();
   const counts = useDhikrDay(dayKey);
+  const { favourites } = useAdhkarLibrary();
   const groups = useMemo(() => {
     const times: DhikrTime[] = ['morning', 'evening'];
     return times.map(time => {
-      const items = FAVOURITES.filter(d => d.time === time);
+      const items = favourites.filter(d => d.time === time);
       const done = items.filter(d => (counts[d.id] ?? 0) >= d.count).length;
       return { time, done, total: items.length };
     });
-  }, [counts]);
+  }, [counts, favourites]);
 
   return (
     <PressableScale onPress={onOpen} accessibilityRole="button" accessibilityLabel="Open dhikr" style={{ marginBottom: 14 }}>
@@ -298,12 +300,12 @@ function DhikrSummary({ dayKey, onOpen }: { dayKey: string; onOpen: () => void }
           {groups.map(g => (
             <View key={g.time} style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <ProgressRing size={46} stroke={4} progress={g.total ? g.done / g.total : 0} color={c.accent} track={c.surfaceSunk}>
-                <Icon name={g.time === 'morning' ? 'sunrise' : 'sunset'} size={17} color={g.done === g.total ? c.accent : c.textMuted} />
+                <Icon name={g.time === 'morning' ? 'sunrise' : 'sunset'} size={17} color={g.total > 0 && g.done === g.total ? c.accent : c.textMuted} />
               </ProgressRing>
               <View>
                 <AppText variant="label">{TIME_META[g.time].label}</AppText>
-                <AppText variant="caption" tone={g.done === g.total ? 'accent' : 'muted'}>
-                  {g.done === g.total ? 'Complete' : `${g.done} of ${g.total} done`}
+                <AppText variant="caption" tone={g.total > 0 && g.done === g.total ? 'accent' : 'muted'}>
+                  {g.total === 0 ? 'None listed' : g.done === g.total ? 'Complete' : `${g.done} of ${g.total} done`}
                 </AppText>
               </View>
             </View>
