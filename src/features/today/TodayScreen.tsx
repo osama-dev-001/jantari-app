@@ -9,8 +9,10 @@ import { FAVOURITES, TIME_META, type DhikrTime } from '../../data/adhkar';
 import { haptics, hijriNow, useCityToday, useFocusedNow, usePrayerState } from '../../hooks';
 import type { RootNav } from '../../app/navigation';
 import { countPrayed, isPrayed, lastNDays, togglePrayed, trackerStreak, useDhikrDay, useTasbih, useTracker } from '../../store/progress';
-import { useTheme } from '../../theme/ThemeProvider';
-import { FONTS, RADIUS, arabicStyle, urduStyle } from '../../theme/typography';
+import { updateSettings, useSettings } from '../../store/settings';
+import { useScripts, useTheme } from '../../theme/ThemeProvider';
+import { enableReminders } from '../settings/RemindersScreen';
+import { FONTS, RADIUS } from '../../theme/typography';
 import { GradientFill, ProgressRing, Star, StarLattice } from '../../ui/graphics';
 import { Icon, type IconName } from '../../ui/Icon';
 import { Screen } from '../../ui/layout';
@@ -30,6 +32,7 @@ export const PRAYER_ICON: Record<PrayerKey, IconName> = {
 
 export function TodayScreen() {
   const c = useTheme();
+  const scripts = useScripts();
   const nav = useNavigation<RootNav>();
   const now = useFocusedNow(1000);
   const { city, state, settings } = usePrayerState(now);
@@ -43,7 +46,7 @@ export function TodayScreen() {
     <Screen>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: 4 }}>
         <View style={{ flex: 1 }}>
-          <AppText style={[arabicStyle(26), { textAlign: 'left', lineHeight: 44, color: c.gold }]}>السَّلَامُ عَلَيْكُمْ</AppText>
+          <AppText style={[scripts.arabic(26, { label: true, align: 'left' }), { color: c.gold }]}>السَّلَامُ عَلَيْكُمْ</AppText>
           <AppText variant="caption" tone="muted" style={{ marginTop: -2 }}>
             Assalamu Alaikum
           </AppText>
@@ -57,7 +60,7 @@ export function TodayScreen() {
           <AppText variant="label" tone="secondary">
             {formatHijri(hijri)}
           </AppText>
-          <AppText style={[urduStyle(15), { color: c.textMuted }]}>{formatHijriUrdu(hijri)}</AppText>
+          <AppText style={[scripts.urdu(15, { label: true }), { color: c.textMuted }]}>{formatHijriUrdu(hijri)}</AppText>
         </View>
         {notable && (
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
@@ -75,6 +78,8 @@ export function TodayScreen() {
 
       <FastingCard ramadan={isRamadan(hijri)} now={now} fmt={fmt} />
 
+      <ReminderPrompt onCustomise={() => nav.navigate('Reminders')} />
+
       <DhikrSummary dayKey={today.key} onOpen={() => nav.navigate('Tabs', { screen: 'Dhikr' })} />
 
       <TasbihShortcut onOpen={() => nav.navigate('Tasbih')} />
@@ -87,6 +92,7 @@ export function TodayScreen() {
 
 function NextPrayerHero({ now, fmt }: { now: number; fmt: (t: number) => string }) {
   const c = useTheme();
+  const scripts = useScripts();
   const { state } = usePrayerState(now);
   const { current, next } = state;
   if (!next) return null;
@@ -104,7 +110,7 @@ function NextPrayerHero({ now, fmt }: { now: number; fmt: (t: number) => string 
           </AppText>
           {/* Urdu sits up here so long English names (Midnight, Maghrib) keep the full width. */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-            <AppText style={[urduStyle(20), { color: c.hero.gold, lineHeight: 36, marginVertical: -8 }]}>{meta.ur}</AppText>
+            <AppText style={[scripts.urdu(20, { label: true }), { color: c.hero.gold }]}>{meta.ur}</AppText>
             <Icon name={PRAYER_ICON[next.key]} size={20} color={c.hero.gold} />
           </View>
         </View>
@@ -230,6 +236,7 @@ function PrayerTracker({ now, today, fmt }: { now: number; today: { ymd: YMD; ke
 
 function FastingCard({ ramadan, now, fmt }: { ramadan: boolean; now: number; fmt: (t: number) => string }) {
   const c = useTheme();
+  const scripts = useScripts();
   const { state } = usePrayerState(now);
   const sehri = state.todayTimes.times.fajr;
   const iftar = state.todayTimes.times.maghrib;
@@ -256,7 +263,7 @@ function FastingCard({ ramadan, now, fmt }: { ramadan: boolean; now: number; fmt
                 <AppText variant="caption" tone="muted">
                   {label}
                 </AppText>
-                <AppText style={[urduStyle(12), { color: c.textFaint, lineHeight: 22, marginVertical: -4 }]}>{ur}</AppText>
+                <AppText style={[scripts.urdu(12, { label: true }), { color: c.textFaint }]}>{ur}</AppText>
               </View>
               <AppText variant="subheading" style={{ fontFamily: FONTS.bold }}>
                 {fmt(at)}
@@ -304,6 +311,49 @@ function DhikrSummary({ dayKey, onOpen }: { dayKey: string; onOpen: () => void }
         </View>
       </Card>
     </PressableScale>
+  );
+}
+
+/** One-time invitation to turn on adhkar reminders (off by default; needs notification permission). */
+function ReminderPrompt({ onCustomise }: { onCustomise: () => void }) {
+  const c = useTheme();
+  const { reminders, reminderPromptDismissed } = useSettings();
+  if (reminderPromptDismissed || reminders.morning || reminders.evening) return null;
+  return (
+    <Card style={{ padding: 16, marginBottom: 14, borderColor: c.goldSoft }}>
+      <View style={{ flexDirection: 'row', gap: 12 }}>
+        <View style={{ width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: c.goldSoft }}>
+          <Icon name="clock" size={19} color={c.gold} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <AppText variant="bodyStrong">Adhkar reminders</AppText>
+          <AppText variant="caption" tone="muted" style={{ marginTop: 2, lineHeight: 17 }}>
+            Gentle hourly reminders from Fajr to Zawal and Asr to Isha — every 10 minutes when the time is nearly over.
+          </AppText>
+        </View>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14 }}>
+        <PressableScale
+          onPress={() => enableReminders({ morning: true, evening: true })}
+          accessibilityRole="button"
+          style={{ flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: RADIUS.md, backgroundColor: c.accent }}
+        >
+          <AppText variant="label" color={c.onAccent}>
+            Turn on
+          </AppText>
+        </PressableScale>
+        <PressableScale onPress={onCustomise} accessibilityRole="button" style={{ paddingVertical: 10, paddingHorizontal: 12 }}>
+          <AppText variant="label" tone="accent">
+            Customise
+          </AppText>
+        </PressableScale>
+        <PressableScale onPress={() => updateSettings({ reminderPromptDismissed: true })} accessibilityRole="button" style={{ paddingVertical: 10, paddingHorizontal: 8 }}>
+          <AppText variant="label" tone="muted">
+            Not now
+          </AppText>
+        </PressableScale>
+      </View>
+    </Card>
   );
 }
 

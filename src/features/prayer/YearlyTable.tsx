@@ -4,7 +4,7 @@ import { getYearTimes } from '../../core/prayer/engine';
 import { PRAYER_META, PRAYER_ORDER, type DayTimes, type PrayerKey } from '../../core/prayer/types';
 import { MONTHS, WEEKDAYS, formatClock, weekday, ymdKey } from '../../core/time';
 import { useFocusedNow, usePrayerState } from '../../hooks';
-import { useTheme } from '../../theme/ThemeProvider';
+import { useScripts, useTheme } from '../../theme/ThemeProvider';
 import { FONTS, RADIUS } from '../../theme/typography';
 import { Star } from '../../ui/graphics';
 import { Icon } from '../../ui/Icon';
@@ -28,6 +28,7 @@ type Row = { type: 'month'; month: number; key: string } | { type: 'day'; day: D
 
 export function YearlyTable() {
   const c = useTheme();
+  const scripts = useScripts();
   // Minute resolution is plenty to know which row is "today".
   const now = useFocusedNow(60_000);
   const { city, opts, state, settings } = usePrayerState(now);
@@ -211,7 +212,7 @@ export function YearlyTable() {
                 </View>
                 {columns.map(k => (
                   <View key={k} style={{ width: COL_W, alignItems: 'center' }}>
-                    <AppText style={{ fontFamily: FONTS.urdu, fontSize: 11, lineHeight: 20, color: c.gold, marginTop: -3, marginBottom: -2 }}>
+                    <AppText style={[scripts.urdu(11, { label: true, align: 'center' }), { color: c.gold }]}>
                       {PRAYER_META[k].ur}
                     </AppText>
                     <AppText variant="overline" tone="muted" style={{ fontSize: 9 }}>

@@ -7,8 +7,8 @@ import { PRAYER_META, PRAYER_ORDER, type CalcOptions, type City, type PrayerStat
 import { compassPoint, distanceToKaabaKm, qiblaBearing } from '../../core/qibla';
 import { addDays, formatClock, formatShortDate } from '../../core/time';
 import { useCity, useFocusedNow, usePrayerState } from '../../hooks';
-import { useTheme } from '../../theme/ThemeProvider';
-import { FONTS, RADIUS, urduStyle } from '../../theme/typography';
+import { useScripts, useTheme } from '../../theme/ThemeProvider';
+import { FONTS, RADIUS } from '../../theme/typography';
 import { QiblaDial } from '../../ui/graphics';
 import { Icon } from '../../ui/Icon';
 import { GUTTER, Screen, ScreenTitle } from '../../ui/layout';
@@ -55,6 +55,7 @@ export function PrayerScreen() {
 
 function DailyView() {
   const c = useTheme();
+  const scripts = useScripts();
   const now = useFocusedNow(1000);
   const nav = useNavigation<RootNav>();
   const { city, opts, state, settings } = usePrayerState(now);
@@ -132,7 +133,7 @@ function DailyView() {
               {/* Salah rows only: marker rows need the width for their note, and
                   Nastaliq glyphs overhang their box, so the column has a fixed width. */}
               {meta.kind === 'salah' && (
-                <AppText numberOfLines={1} style={[urduStyle(14), { color: c.textFaint, width: 70, marginLeft: 8, marginRight: 12, lineHeight: 26, marginVertical: -6 }]}>
+                <AppText numberOfLines={1} style={[scripts.urdu(14, { label: true }), { color: c.textFaint, width: 70, marginLeft: 8, marginRight: 12 }]}>
                   {meta.ur}
                 </AppText>
               )}

@@ -6,17 +6,32 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/app/navigation';
 import { flushAllStores } from './src/store/persisted';
 import { dhikrStore, tasbihStore, trackerStore } from './src/store/progress';
+import { syncReminders } from './src/store/reminderSync';
 import { settingsStore, useSettings } from './src/store/settings';
 import { ThemeProvider } from './src/theme/ThemeProvider';
 import { refreshWidgets } from './src/widget/taskHandler';
 
-/** Keeps placed home-screen widgets current while the app is open, and saves on exit. */
-function WidgetSync() {
+/** Keeps widgets and scheduled reminders current while the app is open, and saves on exit. */
+function BackgroundSync() {
   const settings = useSettings();
 
   useEffect(() => {
     refreshWidgets();
+    syncReminders().catch(() => {});
   }, [settings]);
+
+  // Progress changes the reminder text and can end a window early; batch rapid taps.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const unsubscribe = dhikrStore.subscribe(() => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => syncReminders().catch(() => {}), 3000);
+    });
+    return () => {
+      unsubscribe();
+      if (timer) clearTimeout(timer);
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,6 +42,7 @@ function WidgetSync() {
         flushAllStores();
         refreshWidgets();
       }
+      syncReminders().catch(() => {});
     });
     return () => {
       clearInterval(interval);
@@ -57,7 +73,7 @@ export default function App() {
       <SafeAreaProvider>
         <ThemeProvider>
           <AppNavigator />
-          <WidgetSync />
+          <BackgroundSync />
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

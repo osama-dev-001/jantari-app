@@ -5,8 +5,8 @@ import type { RootNav } from '../../app/navigation';
 import { FAVOURITES, OTHERS, TIME_META, groupByTime, type Dhikr } from '../../data/adhkar';
 import { useCityToday, useFocusedNow } from '../../hooks';
 import { useDhikrDay } from '../../store/progress';
-import { useTheme } from '../../theme/ThemeProvider';
-import { RADIUS, arabicStyle, urduStyle } from '../../theme/typography';
+import { useScripts, useTheme } from '../../theme/ThemeProvider';
+import { RADIUS } from '../../theme/typography';
 import { ProgressRing } from '../../ui/graphics';
 import { Icon } from '../../ui/Icon';
 import { GUTTER, Screen, ScreenTitle } from '../../ui/layout';
@@ -22,6 +22,7 @@ export function orderedList(key: DhikrListKey): Dhikr[] {
 
 export function DhikrListScreen() {
   const c = useTheme();
+  const scripts = useScripts();
   const nav = useNavigation<RootNav>();
   const now = useFocusedNow(60_000);
   const today = useCityToday(now);
@@ -85,7 +86,7 @@ export function DhikrListScreen() {
                 <AppText variant="overline" tone="muted">
                   {TIME_META[time].label}
                 </AppText>
-                <AppText style={[urduStyle(13), { color: c.textFaint, lineHeight: 24, marginVertical: -6 }]}>{TIME_META[time].ur}</AppText>
+                <AppText style={[scripts.urdu(13, { label: true }), { color: c.textFaint }]}>{TIME_META[time].ur}</AppText>
               </View>
               <AppText variant="caption" tone={groupDone === items.length ? 'accent' : 'faint'}>
                 {groupDone}/{items.length}
@@ -103,6 +104,7 @@ export function DhikrListScreen() {
 
 function DhikrCard({ item, count, onPress }: { item: Dhikr; count: number; onPress: () => void }) {
   const c = useTheme();
+  const scripts = useScripts();
   const complete = count >= item.count;
   const progress = Math.min(1, count / item.count);
   return (
@@ -117,7 +119,7 @@ function DhikrCard({ item, count, onPress }: { item: Dhikr; count: number; onPre
         }}
       >
         <View style={{ paddingHorizontal: 16, paddingTop: 12, paddingBottom: 12 }}>
-          <AppText numberOfLines={2} style={[arabicStyle(19), { textAlign: 'right', lineHeight: 36, color: c.text }]}>
+          <AppText numberOfLines={2} style={[scripts.arabic(19, { align: 'right' }), { color: c.text }]}>
             {item.arabic}
           </AppText>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 8 }}>

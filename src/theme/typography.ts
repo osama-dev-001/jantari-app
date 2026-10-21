@@ -11,10 +11,8 @@ export const FONTS = {
   extrabold: 'Manrope-ExtraBold',
   display: 'Fraunces-SemiBold',
   displayBold: 'Fraunces-Bold',
-  arabic: 'Amiri-Regular',
-  arabicBold: 'Amiri-Bold',
-  urdu: 'NotoNastaliqUrdu-Regular',
 } as const;
+// Arabic and Urdu fonts are user-selectable: see ./scripts.ts and useScripts().
 
 export type TextVariant =
   | 'display'
@@ -40,23 +38,6 @@ export const TYPE: Record<TextVariant, TextStyle> = {
   overline: { fontFamily: FONTS.bold, fontSize: 11, lineHeight: 14, letterSpacing: 1.4, textTransform: 'uppercase' },
   number: { fontFamily: FONTS.extrabold, fontSize: 15, fontVariant: ['tabular-nums'] },
 };
-
-/** Nastaliq has very tall ascenders/descenders; it clips unless given generous line height. */
-export const urduStyle = (size: number): TextStyle => ({
-  fontFamily: FONTS.urdu,
-  fontSize: size,
-  lineHeight: Math.round(size * 2.1),
-  writingDirection: 'rtl',
-  textAlign: 'right',
-});
-
-export const arabicStyle = (size: number): TextStyle => ({
-  fontFamily: FONTS.arabic,
-  fontSize: size,
-  lineHeight: Math.round(size * 1.85),
-  writingDirection: 'rtl',
-  textAlign: 'center',
-});
 
 export const SPACE = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 28 } as const;
 export const RADIUS = { sm: 10, md: 14, lg: 20, xl: 28, pill: 999 } as const;

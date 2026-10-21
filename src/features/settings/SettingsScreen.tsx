@@ -1,77 +1,27 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Switch, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import type { RootNav } from '../../app/navigation';
 import { formatHijri } from '../../core/hijri';
 import { isMosqueCity, METHOD_KEYS, METHOD_NAMES, methodDetail, resolveMethod } from '../../core/prayer/engine';
 import type { MethodSetting } from '../../core/prayer/types';
 import { LANGS, type Lang } from '../../data/adhkar';
 import { hijriNow, useCity, useNow, usePrayerState } from '../../hooks';
-import { updateSettings, useSettings, type ThemeMode } from '../../store/settings';
+import { updateSettings, useSettings, type ReminderSettings, type ThemeMode } from '../../store/settings';
 import { ACCENT_OPTIONS, buildPalette } from '../../theme/palette';
-import { useTheme } from '../../theme/ThemeProvider';
-import { FONTS, RADIUS } from '../../theme/typography';
+import { ARABIC_FONTS, URDU_FONTS } from '../../theme/scripts';
+import { useScripts, useTheme } from '../../theme/ThemeProvider';
+import { RADIUS } from '../../theme/typography';
 import { Icon, type IconName } from '../../ui/Icon';
 import { Screen, ScreenTitle, Sheet } from '../../ui/layout';
-import { AppText, Card, Divider, PressableScale, Segmented, SectionHeader } from '../../ui/primitives';
+import { AppText, Divider, PressableScale, Segmented } from '../../ui/primitives';
+import { Block, Row, ToggleRow } from './parts';
 
-const APP_VERSION = '2.0';
-
-function Row({
-  icon,
-  title,
-  subtitle,
-  right,
-  onPress,
-}: {
-  icon: IconName;
-  title: string;
-  subtitle?: string;
-  right?: React.ReactNode;
-  onPress?: () => void;
-}) {
-  const c = useTheme();
-  const body = (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12 }}>
-      <View style={{ width: 34, height: 34, borderRadius: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: c.accentSoft }}>
-        <Icon name={icon} size={18} color={c.accent} />
-      </View>
-      <View style={{ flex: 1 }}>
-        <AppText variant="bodyStrong">{title}</AppText>
-        {subtitle ? (
-          <AppText variant="caption" tone="muted" style={{ marginTop: 1 }}>
-            {subtitle}
-          </AppText>
-        ) : null}
-      </View>
-      {right ?? (onPress ? <Icon name="chevron-right" size={18} color={c.textFaint} /> : null)}
-    </View>
-  );
-  return onPress ? (
-    <Pressable onPress={onPress} accessibilityRole="button" android_ripple={{ color: c.line }}>
-      {body}
-    </Pressable>
-  ) : (
-    body
-  );
-}
-
-function Block({ title, children, note }: { title: string; children: React.ReactNode; note?: string }) {
-  return (
-    <View style={{ marginBottom: 22 }}>
-      <SectionHeader title={title} />
-      <Card style={{ paddingHorizontal: 14, paddingVertical: 4 }}>{children}</Card>
-      {note ? (
-        <AppText variant="caption" tone="faint" style={{ marginTop: 8, paddingHorizontal: 4 }}>
-          {note}
-        </AppText>
-      ) : null}
-    </View>
-  );
-}
+const APP_VERSION = '2.1';
 
 export function SettingsScreen() {
   const c = useTheme();
+  const scripts = useScripts();
   const nav = useNavigation<RootNav>();
   const s = useSettings();
   const city = useCity();
@@ -146,6 +96,10 @@ export function SettingsScreen() {
         </View>
       </Block>
 
+      <Block title="Notifications">
+        <Row icon="clock" title="Reminders" subtitle={reminderSummary(s.reminders)} onPress={() => nav.navigate('Reminders')} />
+      </Block>
+
       <Block title="Appearance">
         <View style={{ paddingVertical: 12 }}>
           <AppText variant="bodyStrong" style={{ marginBottom: 8 }}>
@@ -202,24 +156,12 @@ export function SettingsScreen() {
           </View>
         </View>
         <Divider />
-        <View style={{ paddingVertical: 12 }}>
-          <AppText variant="bodyStrong" style={{ marginBottom: 8 }}>
-            Arabic text size
-          </AppText>
-          <Segmented
-            value={String(s.arabicScale)}
-            onChange={v => updateSettings({ arabicScale: Number(v) })}
-            options={[
-              { key: '0.9', label: 'Small' },
-              { key: '1', label: 'Normal' },
-              { key: '1.15', label: 'Large' },
-              { key: '1.3', label: 'Largest' },
-            ]}
-          />
-          <AppText style={{ fontFamily: FONTS.arabic, fontSize: 24 * s.arabicScale, lineHeight: 44 * s.arabicScale, color: c.text, textAlign: 'center', marginTop: 10 }}>
-            سُبْحَانَ اللَّهِ وَبِحَمْدِهِ
-          </AppText>
-        </View>
+        <Row
+          icon="a-large-small"
+          title="Arabic & Urdu text"
+          subtitle={`${ARABIC_FONTS[s.arabicFont].name} · ${URDU_FONTS[s.urduFont].name} · sizes`}
+          onPress={() => nav.navigate('FontSettings')}
+        />
       </Block>
 
       <Block title="Dhikr">
@@ -230,22 +172,11 @@ export function SettingsScreen() {
           <Segmented<Lang>
             value={s.translationLang}
             onChange={translationLang => updateSettings({ translationLang })}
-            options={LANGS.map(l => ({ key: l.key, label: l.label, labelStyle: l.key === 'urdu' ? { fontFamily: FONTS.urdu, fontSize: 13, lineHeight: 24, marginVertical: -4 } : undefined }))}
+            options={LANGS.map(l => ({ key: l.key, label: l.label, labelStyle: l.key === 'urdu' ? scripts.urdu(13, { label: true, align: 'center' }) : undefined }))}
           />
         </View>
         <Divider />
-        <Row
-          icon="vibrate"
-          title="Vibrate on each count"
-          right={
-            <Switch
-              value={s.haptics}
-              onValueChange={haptics => updateSettings({ haptics })}
-              trackColor={{ true: c.accentLine, false: c.surfaceSunk }}
-              thumbColor={s.haptics ? c.accent : c.textFaint}
-            />
-          }
-        />
+        <ToggleRow icon="vibrate" title="Vibrate on each count" value={s.haptics} onChange={haptics => updateSettings({ haptics })} />
       </Block>
 
       <Block title="About">
@@ -271,6 +202,11 @@ export function SettingsScreen() {
       <MethodSheet visible={pickMethod} onClose={() => setPickMethod(false)} />
     </Screen>
   );
+}
+
+function reminderSummary(r: ReminderSettings): string {
+  const on = [r.morning && 'Morning', r.evening && 'Evening', r.prayerAlerts && 'Prayer times'].filter(Boolean);
+  return on.length ? `On · ${on.join(', ')}` : 'Off · morning & evening adhkar, prayer times';
 }
 
 function Stepper({ value, min, max, onChange }: { value: number; min: number; max: number; onChange: (v: number) => void }) {

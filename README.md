@@ -16,9 +16,14 @@ English throughout. No internet needed.
 - **Cities** — Varanasi and Ahmedabad use curated local-mosque timetables; ~60 more
   cities across India, Pakistan, Bangladesh, Nepal, Sri Lanka, the Gulf and Malaysia
   are calculated on the phone with [Adhan](https://github.com/batoulapps/adhan-js).
+- **Reminders** — optional notifications during the morning (Fajr → Zawal) and evening
+  (Asr → Isha) adhkar times: hourly, then every 10 minutes near the end, stopping once done;
+  plus optional prayer-time alerts. All intervals are adjustable. Works offline, survives reboots.
+- **Fonts** — choose the Arabic font (Amiri, Scheherazade, Noto Naskh, Lateef) and Urdu font
+  (Noto Nastaliq, Gulzar, Noto Naskh), each with its own size.
 - **Settings** — calculation method (Auto picks the regional standard), Asr madhab,
   12/24-hour clock, Hijri adjustment (±2 days), Night/Day/System theme, four accents,
-  Arabic text size, default translation language, haptics.
+  default translation language, haptics.
 - **Widget** — resizable; shows the current period, countdown and (when tall enough)
   the day's schedule.
 

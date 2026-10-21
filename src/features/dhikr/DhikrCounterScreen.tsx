@@ -8,8 +8,8 @@ import { LANGS, TIME_META, pickLang, segmentAt, type Dhikr, type Lang } from '..
 import { haptics, useCityToday, useFocusedNow } from '../../hooks';
 import { dhikrStore, incrementDhikr, setDhikrCount, useDhikrDay } from '../../store/progress';
 import { updateSettings, useSettings } from '../../store/settings';
-import { useTheme } from '../../theme/ThemeProvider';
-import { FONTS, RADIUS, arabicStyle, urduStyle } from '../../theme/typography';
+import { useScripts, useTheme } from '../../theme/ThemeProvider';
+import { FONTS, RADIUS } from '../../theme/typography';
 import { ProgressRing, StarLattice } from '../../ui/graphics';
 import { Icon } from '../../ui/Icon';
 import { GUTTER, Sheet, ThemedStatusBar } from '../../ui/layout';
@@ -70,7 +70,8 @@ export function DhikrCounterScreen() {
   };
 
   const ringSize = Math.min(150, Math.round(width * 0.4));
-  const arabicSize = Math.round((seg ? 30 : item.arabic.length > 120 ? 22 : item.arabic.length > 50 ? 25 : 30) * settings.arabicScale);
+  const scripts = useScripts();
+  const arabicSize = seg ? 30 : item.arabic.length > 120 ? 22 : item.arabic.length > 50 ? 25 : 30;
 
   return (
     <GestureDetector gesture={swipe}>
@@ -86,7 +87,7 @@ export function DhikrCounterScreen() {
             <AppText variant="subheading" numberOfLines={1}>
               {item.name}
             </AppText>
-            <AppText style={{ fontFamily: FONTS.arabic, fontSize: 14, lineHeight: 24, color: c.textMuted }} numberOfLines={1}>
+            <AppText style={[scripts.arabic(14, { label: true }), { color: c.textMuted }]} numberOfLines={1}>
               {item.nameAr}
             </AppText>
           </View>
@@ -127,7 +128,7 @@ export function DhikrCounterScreen() {
           <View style={{ borderRadius: RADIUS.xl, overflow: 'hidden', backgroundColor: c.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: c.line }}>
             <StarLattice color={c.goldSoft} tile={40} />
             <View style={{ paddingHorizontal: 18, paddingTop: 22, paddingBottom: 16 }}>
-              <AppText style={[arabicStyle(arabicSize), { color: c.text }]}>{seg ? seg.segment.arabic : item.arabic}</AppText>
+              <AppText style={[scripts.arabic(arabicSize, { scale: true }), { color: c.text }]}>{seg ? seg.segment.arabic : item.arabic}</AppText>
               {seg && item.segments && (
                 <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 12, flexWrap: 'wrap' }}>
                   {item.segments.map((s, i) => {
@@ -278,7 +279,8 @@ function NavButton({ dir, item, onPress, highlight }: { dir: 1 | -1; item?: Dhik
 
 function LocalizedBody({ text, lang }: { text: string; lang: Lang }) {
   const c = useTheme();
-  if (lang === 'urdu') return <AppText style={[urduStyle(17), { color: c.textSecondary }]}>{text}</AppText>;
+  const scripts = useScripts();
+  if (lang === 'urdu') return <AppText style={[scripts.urdu(17, { scale: true }), { color: c.textSecondary }]}>{text}</AppText>;
   return (
     <AppText variant="body" tone="secondary" style={{ fontSize: 15.5, lineHeight: 25 }}>
       {text}
@@ -287,6 +289,7 @@ function LocalizedBody({ text, lang }: { text: string; lang: Lang }) {
 }
 
 function LangSwitch({ lang }: { lang: Lang }) {
+  const scripts = useScripts();
   return (
     <Segmented<Lang>
       compact
@@ -295,7 +298,7 @@ function LangSwitch({ lang }: { lang: Lang }) {
       options={LANGS.map(l => ({
         key: l.key,
         label: l.label,
-        labelStyle: l.key === 'urdu' ? { fontFamily: FONTS.urdu, fontSize: 13, lineHeight: 24, marginVertical: -4 } : undefined,
+        labelStyle: l.key === 'urdu' ? scripts.urdu(13, { label: true, align: 'center' }) : undefined,
       }))}
       style={{ marginBottom: 14 }}
     />

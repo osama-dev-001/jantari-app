@@ -1,5 +1,6 @@
 import React from 'react';
 import { requestWidgetUpdate, type WidgetTaskHandlerProps } from 'react-native-android-widget';
+import { syncRemindersIfStale } from '../store/reminderSync';
 import { settingsStore } from '../store/settings';
 import { buildWidgetModel, EMPTY_WIDGET } from './model';
 import { PrayerWidget } from './PrayerWidget';
@@ -25,6 +26,8 @@ export async function widgetTaskHandler(props: WidgetTaskHandlerProps) {
     case 'WIDGET_RESIZED':
     case 'WIDGET_CLICK': // the ↻ button (clickAction "REFRESH")
       await render(props);
+      // The widget's periodic wake-up also keeps the week of reminders topped up.
+      await syncRemindersIfStale().catch(() => {});
       break;
     default:
       break;

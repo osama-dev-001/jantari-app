@@ -1,5 +1,5 @@
 import { createBottomTabNavigator, type BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import { DarkTheme, DefaultTheme, NavigationContainer, type NavigatorScreenParams } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer, type LinkingOptions, type NavigatorScreenParams } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets, type StackNavigationProp } from '@react-navigation/stack';
 import React, { useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
@@ -10,6 +10,8 @@ import { TasbihScreen } from '../features/dhikr/TasbihScreen';
 import { WidgetPreviewScreen } from '../features/dev/WidgetPreviewScreen';
 import { CityPickerScreen } from '../features/prayer/CityPicker';
 import { PrayerScreen } from '../features/prayer/PrayerScreen';
+import { FontSettingsScreen } from '../features/settings/FontSettingsScreen';
+import { RemindersScreen } from '../features/settings/RemindersScreen';
 import { SettingsScreen } from '../features/settings/SettingsScreen';
 import { TodayScreen } from '../features/today/TodayScreen';
 import { useTheme } from '../theme/ThemeProvider';
@@ -23,10 +25,18 @@ export type RootStackParams = {
   DhikrCounter: { list: DhikrListKey; id: string };
   Tasbih: undefined;
   CityPicker: undefined;
+  FontSettings: undefined;
+  Reminders: undefined;
   WidgetPreview: undefined;
 };
 
 export type RootNav = StackNavigationProp<RootStackParams>;
+
+// Reminder notifications open islamicdaily://dhikr or islamicdaily://today.
+const linking: LinkingOptions<RootStackParams> = {
+  prefixes: ['islamicdaily://'],
+  config: { screens: { Tabs: { screens: { Today: 'today', Prayer: 'prayer', Dhikr: 'dhikr', Settings: 'settings' } }, Reminders: 'reminders' } },
+};
 
 const Tab = createBottomTabNavigator<TabParams>();
 const Stack = createStackNavigator<RootStackParams>();
@@ -115,7 +125,7 @@ export function AppNavigator() {
   }, [c]);
 
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer theme={navTheme} linking={linking}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -127,6 +137,8 @@ export function AppNavigator() {
         <Stack.Screen name="DhikrCounter" component={DhikrCounterScreen} />
         <Stack.Screen name="Tasbih" component={TasbihScreen} />
         <Stack.Screen name="CityPicker" component={CityPickerScreen} />
+        <Stack.Screen name="FontSettings" component={FontSettingsScreen} />
+        <Stack.Screen name="Reminders" component={RemindersScreen} />
         {__DEV__ && <Stack.Screen name="WidgetPreview" component={WidgetPreviewScreen} />}
       </Stack.Navigator>
     </NavigationContainer>

@@ -39,6 +39,26 @@ describe('settings', () => {
     expect(s.haptics).toBe(true);
   });
 
+  it('defaults and validates font and reminder settings', async () => {
+    const { AsyncStorage, settings } = fresh();
+    await AsyncStorage.setItem(
+      'v2:settings',
+      JSON.stringify({ arabicFont: 'comic', urduFont: 'gulzar', urduScale: 5, reminders: { morning: true, everyMin: 7, endingWindowMin: 60 } }),
+    );
+    const s = await settings.settingsStore.load();
+    expect(s.arabicFont).toBe('amiri');
+    expect(s.urduFont).toBe('gulzar');
+    expect(s.urduScale).toBe(1);
+    expect(s.reminders).toEqual({ ...settings.DEFAULT_REMINDERS, morning: true, endingWindowMin: 60 });
+  });
+
+  it('keeps reminders off for existing users until they opt in', async () => {
+    const { AsyncStorage, settings } = fresh();
+    await AsyncStorage.setItem('v2:settings', JSON.stringify({ cityId: 'amd' }));
+    const s = await settings.settingsStore.load();
+    expect(s.reminders.morning || s.reminders.evening || s.reminders.prayerAlerts).toBe(false);
+  });
+
   it('survives unparseable JSON', async () => {
     const { AsyncStorage, settings } = fresh();
     await AsyncStorage.setItem('v2:settings', '{oops');

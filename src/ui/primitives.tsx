@@ -74,8 +74,12 @@ export function PressableScale({ style, scaleTo = 0.97, fill, onPressIn, onPress
     const i: Record<string, unknown> = fill ? { flexGrow: 1 } : {};
     for (const [k, v] of Object.entries(flat)) {
       if (OUTER_KEYS.has(k)) o[k] = v;
-      else if (SIZE_KEYS.has(k)) o[k] = i[k] = v;
-      else i[k] = v;
+      // Percentages resolve against the parent, so they only make sense on the
+      // outer layer; the inner layer stretches to it horizontally anyway.
+      else if (SIZE_KEYS.has(k)) {
+        o[k] = v;
+        if (typeof v === 'number') i[k] = v;
+      } else i[k] = v;
     }
     return [o as ViewStyle, i as ViewStyle];
   }, [style, fill]);
