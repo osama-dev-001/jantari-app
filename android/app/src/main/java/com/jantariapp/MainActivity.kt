@@ -11,7 +11,11 @@ class MainActivity : ReactActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     RNBootSplash.init(this, R.style.BootTheme)
-    super.onCreate(savedInstanceState)
+    // null, not savedInstanceState: react-native-screens can't restore its
+    // fragments, so passing the old state crashed the app whenever Android had
+    // killed it in the background and the user came back (common on MIUI), or
+    // when a notification reopened it. Navigation state is rebuilt by JS anyway.
+    super.onCreate(null)
   }
 
 
