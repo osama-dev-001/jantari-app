@@ -1,4 +1,4 @@
 # Seed files carry multi-line hadith text inside quoted values; CRLF conversion
-# would insert  into the stored text.
+# would insert carriage returns into the stored text.
 supabase/seed/*.csv text eol=lf
 supabase/seed/*.sql text eol=lf
