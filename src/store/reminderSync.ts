@@ -29,7 +29,7 @@ export async function syncReminders(now = Date.now()): Promise<number> {
     r.morning || r.evening || r.prayerAlerts
       ? buildReminderPlan({ city, opts: calcOptionsOf(s), settings: r, timeFormat: s.timeFormat, now, progress: progressFor })
       : [];
-  const count = await nativeReminders.schedule(plan);
+  const count = await nativeReminders.schedule(plan, r.sound);
 
   // A reminder already showing for a window that is now complete is just noise.
   const today = ymdKey(ymdAt(now, city.tzOffsetMin));

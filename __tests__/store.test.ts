@@ -59,6 +59,20 @@ describe('settings', () => {
     expect(s.reminders.morning || s.reminders.evening || s.reminders.prayerAlerts).toBe(false);
   });
 
+  it('gives reminders the app chime unless another sound was chosen', async () => {
+    const { AsyncStorage, settings } = fresh();
+    await AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { morning: true } }));
+    expect((await settings.settingsStore.load()).reminders.sound).toBe('chime');
+
+    const again = fresh();
+    await again.AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { sound: 'system' } }));
+    expect((await again.settings.settingsStore.load()).reminders.sound).toBe('system');
+
+    const junk = fresh();
+    await junk.AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { sound: 'trumpet' } }));
+    expect((await junk.settings.settingsStore.load()).reminders.sound).toBe('chime');
+  });
+
   it('survives unparseable JSON', async () => {
     const { AsyncStorage, settings } = fresh();
     await AsyncStorage.setItem('v2:settings', '{oops');

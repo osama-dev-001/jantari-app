@@ -10,6 +10,8 @@ export type Accent = 'emerald' | 'lapis' | 'saffron' | 'violet';
 export type Lang = 'urdu' | 'hindi' | 'english';
 export type ArabicFont = 'amiri' | 'scheherazade' | 'naskh' | 'lateef';
 export type UrduFont = 'nastaliq' | 'gulzar' | 'naskh';
+/** App sounds live in android/app/src/main/res/raw; 'system' is the phone's own notification sound. */
+export type ReminderSound = 'chime' | 'bell' | 'harp' | 'system';
 
 export type ReminderSettings = {
   /** Fajr → Zawal (Dhuhr where a city has no Zawal). */
@@ -27,6 +29,7 @@ export type ReminderSettings = {
   stopWhenDone: boolean;
   /** One alert as each of the five prayers begins. */
   prayerAlerts: boolean;
+  sound: ReminderSound;
 };
 
 export type Settings = {
@@ -60,6 +63,7 @@ export const DEFAULT_REMINDERS: ReminderSettings = {
   endingEveryMin: 10,
   stopWhenDone: true,
   prayerAlerts: false,
+  sound: 'chime',
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -121,6 +125,7 @@ function sanitizeReminders(raw: unknown): ReminderSettings {
     endingEveryMin: pick(r.endingEveryMin, ENDING_EVERY_OPTIONS, d.endingEveryMin),
     stopWhenDone: bool(r.stopWhenDone, d.stopWhenDone),
     prayerAlerts: bool(r.prayerAlerts, d.prayerAlerts),
+    sound: oneOf<ReminderSound>(r.sound, REMINDER_SOUNDS, d.sound),
   };
 }
 
@@ -128,6 +133,7 @@ export const START_AFTER_OPTIONS = [0, 15, 30];
 export const EVERY_OPTIONS = [30, 60, 120];
 export const ENDING_WINDOW_OPTIONS = [0, 30, 60];
 export const ENDING_EVERY_OPTIONS = [5, 10, 15];
+export const REMINDER_SOUNDS: ReminderSound[] = ['chime', 'bell', 'harp', 'system'];
 
 /** Carries the city and madhab over from v1, which stored them as bare keys. */
 async function migrateFromV1(): Promise<Settings | null> {

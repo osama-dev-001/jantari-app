@@ -11,16 +11,25 @@ import {
   ENDING_EVERY_OPTIONS,
   ENDING_WINDOW_OPTIONS,
   EVERY_OPTIONS,
+  REMINDER_SOUNDS,
   START_AFTER_OPTIONS,
   updateReminders,
   useSettings,
   type ReminderSettings,
+  type ReminderSound,
 } from '../../store/settings';
 import { useTheme } from '../../theme/ThemeProvider';
 import { RADIUS } from '../../theme/typography';
 import { Icon } from '../../ui/Icon';
 import { AppText, Divider, PressableScale } from '../../ui/primitives';
-import { Block, ChoiceRow, SubScreen, ToggleRow } from './parts';
+import { Block, ChoiceRow, Row, SubScreen, ToggleRow } from './parts';
+
+const SOUND_META: Record<ReminderSound, { name: string; note: string }> = {
+  chime: { name: 'Chime', note: 'Three soft rising notes' },
+  bell: { name: 'Bell', note: 'A single warm bell' },
+  harp: { name: 'Harp', note: 'A quick plucked arpeggio' },
+  system: { name: 'Phone default', note: "Your phone's notification sound" },
+};
 
 const minutes = (m: number) => (m === 0 ? 'At start' : m < 60 ? `${m} min` : m % 60 === 0 ? `${m / 60} hr` : `${m} min`);
 
@@ -149,6 +158,23 @@ export function RemindersScreen() {
 
       <Block title="Prayer times">
         <ToggleRow icon="mosque" title="Prayer time alerts" subtitle="A notification as each of the five prayers begins" value={r.prayerAlerts} onChange={toggle('prayerAlerts')} />
+      </Block>
+
+      <Block title="Sound" note="Tap a sound to hear it. Used for both adhkar and prayer reminders.">
+        {REMINDER_SOUNDS.map((key, i) => (
+          <View key={key}>
+            {i > 0 && <Divider />}
+            <Row
+              title={SOUND_META[key].name}
+              subtitle={SOUND_META[key].note}
+              onPress={() => {
+                updateReminders({ sound: key });
+                nativeReminders.previewSound(key);
+              }}
+              right={r.sound === key ? <Icon name="circle-check" size={20} color={c.accent} /> : <View style={{ width: 20 }} />}
+            />
+          </View>
+        ))}
       </Block>
 
       {anyOn && (

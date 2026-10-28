@@ -1,6 +1,7 @@
 package com.jantariapp.reminders
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
@@ -18,8 +19,10 @@ import com.facebook.react.uimanager.ViewManager
 class RemindersModule(private val ctx: ReactApplicationContext) : ReactContextBaseJavaModule(ctx) {
   override fun getName() = "IslamicReminders"
 
+  private var preview: MediaPlayer? = null
+
   @ReactMethod
-  fun schedule(items: ReadableArray, promise: Promise) {
+  fun schedule(items: ReadableArray, sound: String, promise: Promise) {
     try {
       val list =
         List(items.size()) { i ->
@@ -34,6 +37,7 @@ class RemindersModule(private val ctx: ReactApplicationContext) : ReactContextBa
             link = m.getString("link") ?: "islamicdaily://today",
           )
         }
+      if (Notifications.isKnownSound(sound)) ReminderStore.saveSound(ctx, sound)
       Notifications.ensureChannels(ctx)
       ReminderScheduler.replaceAll(ctx, list)
       promise.resolve(list.count { it.at > System.currentTimeMillis() })
@@ -54,6 +58,29 @@ class RemindersModule(private val ctx: ReactApplicationContext) : ReactContextBa
       Reminder(9999, 9999, System.currentTimeMillis(), title, body, Notifications.CHANNEL_ADHKAR, "islamicdaily://dhikr"),
     )
     promise.resolve(Notifications.canPost(ctx))
+  }
+
+  /** Plays a sound at notification volume (silent when the phone is). */
+  @ReactMethod
+  fun previewSound(sound: String) {
+    preview?.release()
+    preview = null
+    // A Ringtone would be simpler, but recent Android ignores its audio attributes and plays at ringer volume.
+    val player = MediaPlayer()
+    try {
+      player.setAudioAttributes(Notifications.AUDIO)
+      player.setDataSource(ctx, Notifications.soundUri(ctx, sound))
+      player.setOnCompletionListener {
+        it.release()
+        if (preview === it) preview = null
+      }
+      player.prepare()
+      player.start()
+      preview = player
+    } catch (e: Exception) {
+      // E.g. the phone's notification sound is set to "None".
+      player.release()
+    }
   }
 
   @ReactMethod

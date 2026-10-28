@@ -22,6 +22,7 @@ English throughout. No internet needed.
 - **Reminders** — optional notifications during the morning (Fajr → Zawal) and evening
   (Asr → Isha) adhkar times: hourly, then every 10 minutes near the end, stopping once done;
   plus optional prayer-time alerts. All intervals are adjustable. Works offline, survives reboots.
+  Plays the app's own chime by default; Bell, Harp or the phone's sound can be picked instead.
 - **Fonts** — choose the Arabic font (Amiri, Scheherazade, Noto Naskh, Lateef) and Urdu font
   (Noto Nastaliq, Gulzar, Noto Naskh), each with its own size. Arabic is shown in IndoPak script,
   as in South Asian dua books — khari zabar, ulta pesh, khari zer, madd, sukun on long و/ي and

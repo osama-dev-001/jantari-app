@@ -42,10 +42,20 @@ data class Reminder(
   }
 }
 
-/** Pending reminders persisted so they can be re-registered after a reboot. */
+/** Pending reminders persisted so they can be re-registered after a reboot, and the chosen sound. */
 object ReminderStore {
   private const val PREFS = "islamic_daily_reminders"
   private const val KEY = "pending"
+  private const val SOUND = "sound"
+
+  fun sound(context: Context): String {
+    val saved = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(SOUND, null)
+    return if (saved != null && Notifications.isKnownSound(saved)) saved else Notifications.DEFAULT_SOUND
+  }
+
+  fun saveSound(context: Context, sound: String) {
+    context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(SOUND, sound).apply()
+  }
 
   fun load(context: Context): List<Reminder> {
     val raw = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getString(KEY, null) ?: return emptyList()

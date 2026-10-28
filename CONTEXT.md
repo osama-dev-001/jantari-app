@@ -77,6 +77,11 @@ only `select` active rows. `npm run export:adhkar` regenerates `supabase/seed/*`
   `adhkar_ending` (high), `prayer` (high). One notification slot per window per day, so reminders
   replace each other. Taps deep-link to `islamicdaily://dhikr` / `islamicdaily://today`.
 - Reminders are **off by default**; turning one on requests `POST_NOTIFICATIONS` (Android 13+).
+- **Sound** (`reminders.sound`, default `chime`): Chime / Bell / Harp from `res/raw/reminder_*.ogg`,
+  or the phone's default. Android fixes a channel's sound at creation, so each sound has its own
+  channels (`adhkar.chime`, `prayer.bell`, …; the phone default keeps the original ids) and the
+  others are deleted. Plans keep the base channel name; the sound picked at post time chooses the
+  real channel. The sounds are synthesised by `scripts/make-reminder-sounds.py` (no licence terms).
 
 ## Fonts
 
