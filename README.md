@@ -23,7 +23,9 @@ English throughout. No internet needed.
   (Asr → Isha) adhkar times: hourly, then every 10 minutes near the end, stopping once done;
   plus optional prayer-time alerts. All intervals are adjustable. Works offline, survives reboots.
 - **Fonts** — choose the Arabic font (Amiri, Scheherazade, Noto Naskh, Lateef) and Urdu font
-  (Noto Nastaliq, Gulzar, Noto Naskh), each with its own size.
+  (Noto Nastaliq, Gulzar, Noto Naskh), each with its own size. Arabic is shown in IndoPak script,
+  as in South Asian dua books — khari zabar, ulta pesh, khari zer, madd, sukun on long و/ي and
+  alif without hamza (لَآ اِلٰهَ اِلَّا اللّٰهُ وَحْدَهٗ لَا شَرِيْكَ لَهٗ) — in every font.
 - **Settings** — calculation method (Auto picks the regional standard), Asr madhab,
   12/24-hour clock, Hijri adjustment (±2 days), Night/Day/System theme, four accents,
   default translation language, haptics.

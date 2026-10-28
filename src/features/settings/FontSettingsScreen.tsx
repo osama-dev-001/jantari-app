@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import { toIndoPak } from '../../core/arabic';
 import { updateSettings, useSettings, type ArabicFont, type UrduFont } from '../../store/settings';
 import { ARABIC_FONTS, URDU_FONTS, previewStyle } from '../../theme/scripts';
 import { useScripts, useTheme } from '../../theme/ThemeProvider';
@@ -15,7 +16,7 @@ const SIZES = [
   { key: '1.3', label: 'Largest' },
 ];
 
-const ARABIC_SAMPLE = 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ';
+const ARABIC_SAMPLE = toIndoPak('سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ');
 const URDU_SAMPLE = 'اللہ پاک ہے اور حمد اسی کے لیے ہے، اللہ پاک ہے اور وہ بہت عظمت والا ہے۔';
 
 type FontMeta = { name: string; note: string; family: string };
@@ -83,7 +84,7 @@ export function FontSettingsScreen() {
   return (
     <SubScreen title="Arabic & Urdu text" subtitle="Fonts and sizes for dhikr and translations">
       <SectionHeader title="Arabic" />
-      <FontGrid<ArabicFont> fonts={ARABIC_FONTS} value={s.arabicFont} onChange={arabicFont => updateSettings({ arabicFont })} sample="بِسْمِ اللَّهِ" />
+      <FontGrid<ArabicFont> fonts={ARABIC_FONTS} value={s.arabicFont} onChange={arabicFont => updateSettings({ arabicFont })} sample={toIndoPak('بِسْمِ اللَّهِ')} />
       <Card style={{ paddingHorizontal: 14, paddingVertical: 4, marginTop: 12 }}>
         <ChoiceRow title="Size" value={String(s.arabicScale)} options={SIZES} onChange={v => updateSettings({ arabicScale: Number(v) })} />
         <AppText style={[scripts.arabic(26, { scale: true }), { color: c.text, paddingBottom: 12 }]}>{ARABIC_SAMPLE}</AppText>

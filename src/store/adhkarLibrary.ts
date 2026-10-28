@@ -1,8 +1,9 @@
 import { useSyncExternalStore } from 'react';
 import { ADHKAR_TABLE, SUPABASE_ANON_KEY, SUPABASE_URL } from '../config/remote';
+import { toIndoPak } from '../core/arabic';
 import { FAVOURITES, OTHERS } from '../data/adhkar';
 import { rowsToLibrary } from '../data/adhkar/remote';
-import type { AdhkarLibrary } from '../data/adhkar/types';
+import type { AdhkarLibrary, Dhikr, LocalizedText } from '../data/adhkar/types';
 import { createPersistedStore, isRecord, useStore } from './persisted';
 
 // The adhkar shown in the app come from, in order of preference:
@@ -22,16 +23,38 @@ export const adhkarCache = createPersistedStore<Snapshot | null>('v2:adhkar-remo
 
 export type LibraryState = AdhkarLibrary & { source: 'remote' | 'bundled'; fetchedAt?: number };
 
+/** Text as the screens show it: IndoPak script (see core/arabic). */
+function forDisplay(lib: AdhkarLibrary): AdhkarLibrary {
+  const local = (t: LocalizedText | undefined) =>
+    t && (Object.fromEntries(Object.entries(t).map(([lang, v]) => [lang, v && toIndoPak(v)])) as LocalizedText);
+  const dhikr = (d: Dhikr): Dhikr => ({
+    ...d,
+    nameAr: toIndoPak(d.nameAr),
+    arabic: toIndoPak(d.arabic),
+    translations: local(d.translations) ?? {},
+    virtue: local(d.virtue),
+    hadith: local(d.hadith),
+    segments: d.segments?.map(seg => ({ ...seg, arabic: toIndoPak(seg.arabic) })),
+  });
+  return { favourites: lib.favourites.map(dhikr), others: lib.others.map(dhikr) };
+}
+
+let bundledForDisplay: AdhkarLibrary | undefined;
 let derivedFrom: Snapshot | null | undefined;
-let derived: LibraryState = { ...BUNDLED, source: 'bundled' };
+let derived: LibraryState | undefined;
 
 /** The adhkar currently in use (remote cache if it has any valid rows, else bundled). */
 export function getAdhkarLibrary(): LibraryState {
   const snap = adhkarCache.get();
-  if (snap !== derivedFrom) {
+  if (!derived || snap !== derivedFrom) {
     derivedFrom = snap;
     const lib = snap ? rowsToLibrary(snap.rows) : null;
-    derived = lib && lib.total > 0 ? { favourites: lib.favourites, others: lib.others, source: 'remote', fetchedAt: snap!.fetchedAt } : { ...BUNDLED, source: 'bundled' };
+    if (lib && lib.total > 0) {
+      derived = { ...forDisplay(lib), source: 'remote', fetchedAt: snap!.fetchedAt };
+    } else {
+      bundledForDisplay = bundledForDisplay ?? forDisplay(BUNDLED);
+      derived = { ...bundledForDisplay, source: 'bundled' };
+    }
   }
   return derived;
 }

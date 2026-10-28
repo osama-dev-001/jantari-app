@@ -93,7 +93,25 @@ describe('library download', () => {
     const s = await lib.refreshAdhkar({ force: true, fetchImpl: respond([]) });
     expect(s.state).toBe('empty');
     expect(lib.getAdhkarLibrary().source).toBe('bundled');
-    expect(lib.getAdhkarLibrary().favourites).toEqual(FAVOURITES);
+    expect(lib.getAdhkarLibrary().favourites.map(d => d.id)).toEqual(FAVOURITES.map(d => d.id));
+  });
+
+  it('shows Allah with a khari zabar, whichever source the adhkar came from', async () => {
+    // Allah as typed in the data (lam, lam + zabar + shadda, heh) and with the
+    // khari zabar. A lone لَّهُ ("lahu", in Ayat al-Kursi) is a different word.
+    const zabarShadda = /\u0644[\u064B-\u0652]?\u0644\u064E\u0651\u0647/;
+    const khariZabar = /\u0644\u0651\u0670\u0647/;
+    expect(JSON.stringify(BUNDLED)).toMatch(zabarShadda);
+
+    const lib = setup();
+    await lib.adhkarCache.load();
+    expect(JSON.stringify(lib.getAdhkarLibrary())).not.toMatch(zabarShadda);
+    expect(JSON.stringify(lib.getAdhkarLibrary())).toMatch(khariZabar);
+
+    await lib.refreshAdhkar({ force: true, fetchImpl: respond(rows()) });
+    expect(lib.getAdhkarLibrary().source).toBe('remote');
+    expect(JSON.stringify(lib.getAdhkarLibrary())).not.toMatch(zabarShadda);
+    expect(lib.getAdhkarLibrary().favourites[0].arabic).toMatch(khariZabar);
   });
 
   it('replaces the list with server data, caches it, and survives going offline', async () => {

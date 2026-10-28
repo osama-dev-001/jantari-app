@@ -85,6 +85,14 @@ Naskh) are user-selectable, with separate size settings. Always style Arabic/Urd
 `useScripts().arabic(size, opts)` / `.urdu(size, opts)` — each font carries its own size and
 line-height metrics (Nastaliq needs ~2× line height). `label: true` gives compact single-line metrics.
 
+Arabic is shown in IndoPak script. The data (bundled and Supabase) is typed in ordinary Arabic
+spelling and left that way; `core/arabic.ts` (`toIndoPak`) rewrites it when the adhkar library is
+assembled: khari zabar for a long ā with no alif (اللّٰهِ, إِلٰهَ, عَلٰى, الرَّحْمٰنِ…), ulta pesh / khari
+zer for a long pronoun (وَحْدَهٗ, بِحَمْدِهٖ), madd before a hamza (لَآ اِلٰهَ, شَآءَ), sukun on a long
+و/ي (شَرِيْكَ, اَعُوْذُ), hamza-less alif (اَنْتَ, اٰيَةُ), and a zabar on an opening al- (اَللّٰهُمَّ). Vowels before a silent alif stay short
+(لَهُ الْمُلْكُ). Hidden-alif words are a list — add new ones to its `RULES`. It is idempotent and
+leaves unvoweled/Urdu text alone; tests compare output by NFC (madd is written as alif + U+0653).
+
 ## Widget
 
 Provider `com.jantariapp.widget.Jantari`, widget name `Jantari` (don't rename). Computes
