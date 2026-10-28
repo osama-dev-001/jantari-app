@@ -19,7 +19,7 @@ import { Screen, ScreenTitle, Sheet } from '../../ui/layout';
 import { AppText, Divider, PressableScale, Segmented } from '../../ui/primitives';
 import { Block, Row, ToggleRow } from './parts';
 
-const APP_VERSION = '2.1';
+const APP_VERSION = '2.2';
 
 export function SettingsScreen() {
   const c = useTheme();
