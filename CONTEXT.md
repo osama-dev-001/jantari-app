@@ -45,10 +45,10 @@ src/widget/             model.ts (pure), PrayerWidget.tsx (RemoteViews), taskHan
 |---|---|
 | `v2:settings` | `Settings` (migrated from v1 `selected_city`, `prayer_madhab`) |
 | `v2:dhikr` | `{ 'YYYY-MM-DD': { [dhikrId]: count } }`, 90 days (migrated from v1 `dhikr_count_*`) |
-| `v2:tracker` | `{ 'YYYY-MM-DD': PrayerKey[] }`, 90 days |
+| `v2:tracker` | `{ 'YYYY-MM-DD': PrayerKey[] }` — unused since v2.3 (salah tracker removed); left in place |
 | `v2:tasbih` | `{ count, target, total }` |
 
-v1 keys are left in place, so rolling back to v1 still works. Dhikr/tracker days follow
+v1 keys are left in place, so rolling back to v1 still works. Dhikr days follow
 the selected city's calendar date. Increments read the store's current value
 (`incrementDhikr`), so taps landing before a re-render are never lost.
 

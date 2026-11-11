@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FARD, type PrayerKey } from '../core/prayer/types';
 import { addDays, ymdKey, type YMD } from '../core/time';
 import { createPersistedStore, isRecord, useStore } from './persisted';
 
@@ -87,36 +86,7 @@ export function incrementDhikr(today: YMD, id: string, target: number): number {
   return result;
 }
 
-// ─── Prayer tracker: { 'YYYY-MM-DD': prayed fard keys } ──────────────────────
-
-export type TrackerLog = Record<string, PrayerKey[]>;
-
-export const trackerStore = createPersistedStore<TrackerLog>('v2:tracker', {}, {
-  sanitize: raw => {
-    const out: TrackerLog = {};
-    if (isRecord(raw)) {
-      for (const [k, v] of Object.entries(raw)) {
-        if (isDateKey(k) && Array.isArray(v)) out[k] = FARD.filter(p => v.includes(p));
-      }
-    }
-    return out;
-  },
-});
-
-export const useTracker = () => useStore(trackerStore);
-
-export const isPrayed = (day: PrayerKey[] | undefined, key: PrayerKey) => !!day?.includes(key);
-export const countPrayed = (day: PrayerKey[] | undefined) => day?.length ?? 0;
-
-export function togglePrayed(today: YMD, dayKey: string, key: PrayerKey) {
-  trackerStore.set(prev => {
-    const next = prune(prev, today);
-    const day = next[dayKey] ?? [];
-    next[dayKey] = day.includes(key) ? day.filter(k => k !== key) : FARD.filter(k => k === key || day.includes(k));
-    return next;
-  });
-}
-
+// The salah tracker (v2:tracker) was removed in v2.3; its saved days are left in storage.
 
 // ─── Free tasbih counter ─────────────────────────────────────────────────────
 

@@ -7,7 +7,7 @@ English throughout. No internet needed.
 ## Features
 
 - **Today** — next prayer with a live countdown, Hijri date (Urdu + English, advances
-  at Maghrib), a five-salah tracker, Sehri/Iftar times in Ramadan, adhkar progress.
+  at Maghrib), Sehri/Iftar times in Ramadan, adhkar progress.
 - **Prayer** — daily schedule (browse any day), Qibla bearing and distance, and the
   **Yearly Jantari** table (ALL / Q1–Q4, jumps to today).
 - **Dhikr** — curated favourites plus more adhkar, grouped by time of day (finished and

@@ -2,14 +2,14 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { periodProgress } from '../../core/prayer/engine';
-import { FARD, PRAYER_META, type PrayerKey } from '../../core/prayer/types';
+import { PRAYER_META, type PrayerKey } from '../../core/prayer/types';
 import { formatHijri, formatHijriUrdu, isRamadan, notableDay } from '../../core/hijri';
-import { formatClock, formatCountdown, formatLongDate, type YMD } from '../../core/time';
+import { formatClock, formatCountdown, formatLongDate } from '../../core/time';
 import { TIME_META, type DhikrTime } from '../../data/adhkar';
 import { useAdhkarLibrary } from '../../store/adhkarLibrary';
-import { haptics, hijriNow, useCityToday, useFocusedNow, usePrayerState } from '../../hooks';
+import { hijriNow, useCityToday, useFocusedNow, usePrayerState } from '../../hooks';
 import type { RootNav } from '../../app/navigation';
-import { countPrayed, isPrayed, togglePrayed, useDhikrDay, useTasbih, useTracker } from '../../store/progress';
+import { useDhikrDay, useTasbih } from '../../store/progress';
 import { updateSettings, useSettings } from '../../store/settings';
 import { useScripts, useTheme } from '../../theme/ThemeProvider';
 import { enableReminders } from '../settings/RemindersScreen';
@@ -69,8 +69,6 @@ export function TodayScreen() {
       </View>
 
       <NextPrayerHero now={now} fmt={fmt} />
-
-      <PrayerTracker now={now} today={today} fmt={fmt} />
 
       {isRamadan(hijri) && <FastingCard now={now} fmt={fmt} />}
 
@@ -139,71 +137,6 @@ function NextPrayerHero({ now, fmt }: { now: number; fmt: (t: number) => string 
         </View>
       </View>
     </View>
-  );
-}
-
-// ─── Salah tracker ───────────────────────────────────────────────────────────
-
-function PrayerTracker({ now, today, fmt }: { now: number; today: { ymd: YMD; key: string }; fmt: (t: number) => string }) {
-  const c = useTheme();
-  const { state } = usePrayerState(now);
-  const log = useTracker();
-  const prayedToday = log[today.key];
-  const done = countPrayed(prayedToday);
-
-  return (
-    <Card style={{ padding: 16, marginBottom: 14 }}>
-      <SectionHeader
-        title="Today's salah"
-        right={
-          <AppText variant="label" tone={done === 5 ? 'accent' : 'muted'}>
-            {done}/5 prayed
-          </AppText>
-        }
-      />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-        {FARD.map(key => {
-          const at = state.todayTimes.times[key];
-          const started = at !== undefined && at <= now;
-          const prayed = isPrayed(prayedToday, key);
-          return (
-            <PressableScale
-              key={key}
-              disabled={!started && !prayed}
-              onPress={() => {
-                haptics.tap();
-                togglePrayed(today.ymd, today.key, key);
-              }}
-              accessibilityRole="checkbox"
-              accessibilityState={{ checked: prayed, disabled: !started && !prayed }}
-              accessibilityLabel={`${PRAYER_META[key].en}${prayed ? ', prayed' : ''}`}
-              style={{ alignItems: 'center', width: 56, opacity: started || prayed ? 1 : 0.45 }}
-            >
-              <View
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: 22,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: prayed ? c.accent : c.surfaceSunk,
-                  borderWidth: prayed ? 0 : 1,
-                  borderColor: started ? c.accentLine : c.line,
-                }}
-              >
-                {prayed ? <Icon name="check" size={20} color={c.onAccent} strokeWidth={2.6} /> : <Icon name={PRAYER_ICON[key]} size={18} color={c.textMuted} />}
-              </View>
-              <AppText variant="label" tone={prayed ? 'accent' : 'secondary'} style={{ marginTop: 6 }}>
-                {PRAYER_META[key].en}
-              </AppText>
-              <AppText variant="caption" tone="faint" style={{ fontSize: 10.5 }}>
-                {at !== undefined ? fmt(at).replace(/ (AM|PM)$/, '') : '—'}
-              </AppText>
-            </PressableScale>
-          );
-        })}
-      </View>
-    </Card>
   );
 }
 

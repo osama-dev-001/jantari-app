@@ -128,14 +128,3 @@ describe('dhikr counts', () => {
     expect(log['2026-10-01'].b).toBe(2);
   });
 });
-
-describe('prayer tracker', () => {
-  it('toggles prayers and keeps them in prayer order', () => {
-    const { progress } = fresh();
-    progress.togglePrayed(TODAY, '2026-10-14', 'isha');
-    progress.togglePrayed(TODAY, '2026-10-14', 'fajr');
-    expect(progress.trackerStore.get()['2026-10-14']).toEqual(['fajr', 'isha']);
-    progress.togglePrayed(TODAY, '2026-10-14', 'fajr');
-    expect(progress.trackerStore.get()['2026-10-14']).toEqual(['isha']);
-  });
-});

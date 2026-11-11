@@ -6,7 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/app/navigation';
 import { adhkarCache, refreshAdhkar } from './src/store/adhkarLibrary';
 import { flushAllStores } from './src/store/persisted';
-import { dhikrStore, tasbihStore, trackerStore } from './src/store/progress';
+import { dhikrStore, tasbihStore } from './src/store/progress';
 import { syncReminders } from './src/store/reminderSync';
 import { settingsStore, useSettings } from './src/store/settings';
 import { ThemeProvider } from './src/theme/ThemeProvider';
@@ -67,7 +67,7 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    Promise.all([settingsStore.load(), dhikrStore.load(), trackerStore.load(), tasbihStore.load(), adhkarCache.load()]).finally(() =>
+    Promise.all([settingsStore.load(), dhikrStore.load(), tasbihStore.load(), adhkarCache.load()]).finally(() =>
       setReady(true),
     );
   }, []);
