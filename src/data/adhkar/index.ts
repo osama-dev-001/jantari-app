@@ -5,11 +5,12 @@ import type { Dhikr, DhikrTime, Lang } from './types';
 export { FAVOURITES, OTHERS };
 export type { Dhikr, DhikrTime, Lang };
 
+/** `order` is the group order on the Dhikr screen and the swipe order in the counter. */
 export const TIME_META: Record<DhikrTime, { label: string; ur: string; order: number }> = {
   morning: { label: 'Morning', ur: 'صبح', order: 0 },
-  evening: { label: 'Evening', ur: 'شام', order: 1 },
-  salah: { label: 'After Salah', ur: 'بعد نماز', order: 2 },
-  any: { label: 'Any time', ur: 'کسی بھی وقت', order: 3 },
+  any: { label: 'Any time', ur: 'کسی بھی وقت', order: 1 },
+  evening: { label: 'Evening', ur: 'شام', order: 2 },
+  salah: { label: 'After Salah', ur: 'بعد نماز', order: 3 },
 };
 
 export const LANGS: { key: Lang; label: string }[] = [

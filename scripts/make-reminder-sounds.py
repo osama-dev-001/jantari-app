@@ -5,10 +5,11 @@ terms. Run from the repo root after `pip install numpy soundfile`:
 
     python scripts/make-reminder-sounds.py
 
-Each sound is a sum of decaying sine partials (bell and bar ratios for the
-chime and bell, near-harmonic string partials for the harp) through a light
-Schroeder reverb. Android plays notification sounds once, so keep them short
-(under ~3 s) with the attack right at the start.
+The bell is a sum of decaying sine partials (bell ratios) through a light
+Schroeder reverb; the birdsong is pure-tone syllables with fast pitch sweeps,
+which is close to how small songbirds actually sound. Android plays
+notification sounds once, so keep them short (under ~3 s) with the attack
+right at the start.
 """
 
 from pathlib import Path
@@ -18,7 +19,6 @@ import soundfile as sf
 
 SR = 44100
 OUT = Path(__file__).resolve().parent.parent / "android" / "app" / "src" / "main" / "res" / "raw"
-rng = np.random.default_rng(7)
 
 
 def timeline(seconds):
@@ -31,7 +31,7 @@ def taper(x, seconds):
     return x
 
 
-def strike(freq, partials, length, attack=0.003):
+def strike(rng, freq, partials, length, attack=0.003):
     """One struck note: (ratio, amplitude, decay seconds) partials with a soft attack."""
     t = timeline(length)
     out = np.zeros_like(t)
@@ -88,16 +88,7 @@ def finish(x, peak_db=-1.0, floor_db=-60.0, fade=0.25):
     return x
 
 
-def chime():
-    """Three rising notes on a small glass bar, G5 → C6 → E6."""
-    bar = [(1.0, 1.0, 0.9), (2.0, 0.22, 0.45), (2.756, 0.30, 0.28), (5.404, 0.10, 0.1), (8.933, 0.03, 0.05)]
-    out = np.zeros(int(3.0 * SR))
-    for at, freq, level, ring in [(0.0, 783.99, 0.75, 0.8), (0.13, 1046.5, 0.8, 0.9), (0.26, 1318.5, 1.0, 1.1)]:
-        place(out, level * strike(freq, [(r, a, tau * ring) for r, a, tau in bar], 2.7), at)
-    return finish(reverb(out, 0.18))
-
-
-def bell():
+def bell(rng):
     """A single warm bell (D5) whose paired partials beat gently, like a struck bowl."""
     # Each weak twin sits ~1 Hz off its partner: a slow shimmer of about 3 dB.
     partials = [
@@ -109,35 +100,79 @@ def bell():
         (8.93, 0.06, 0.18),
     ]
     out = np.zeros(int(3.4 * SR))
-    place(out, strike(587.33, partials, 3.4, attack=0.004), 0.0)
+    place(out, strike(rng, 587.33, partials, 3.4, attack=0.004), 0.0)
     # A faint, short "tink" of the striker on top of the attack.
     click = rng.normal(0, 1, int(0.012 * SR)) * np.exp(-np.arange(int(0.012 * SR)) / (0.002 * SR))
     place(out, 0.08 * np.convolve(click, [1, -1], mode="same"), 0.0)
     return finish(reverb(out, 0.22, size=1.2))
 
 
-def harp():
-    """A quick rising arpeggio, D5 F♯5 A5 D6, plucked."""
-    def pluck(freq, length=2.6):
-        pos = 0.18  # where the string is plucked: lower = brighter
-        partials = []
-        for n in range(1, 13):
-            amp = abs(np.sin(n * np.pi * pos)) / n**2
-            ratio = n * np.sqrt(1 + 0.00015 * n * n)  # slight string stiffness
-            partials.append((ratio, amp, 1.2 / (1 + 0.8 * (n - 1))))
-        return strike(freq, partials, length, attack=0.0012)
+def syllable(contour, length, warble=0.0, skew=(0.6, 1.6)):
+    """One bird note: a pure tone gliding through (position 0–1, Hz) points.
 
-    out = np.zeros(int(3.0 * SR))
-    for i, freq in enumerate([587.33, 739.99, 880.0, 1174.66]):
-        place(out, (0.7 + 0.1 * i) * pluck(freq), 0.075 * i)
-    return finish(reverb(out, 0.16))
+    The glide is interpolated in log-frequency, which is how pitch is heard.
+    `warble` adds a fast flutter (fraction of the pitch); `skew` shapes the
+    envelope (attack, decay exponents) — quick to speak, slower to fade.
+    """
+    t = timeline(length)
+    u = t / length
+    at, hz = zip(*contour)
+    f = np.exp(np.interp(u, at, np.log(hz)))
+    if warble:
+        f *= 1 + warble * np.sin(2 * np.pi * 70 * t)
+    phase = 2 * np.pi * np.cumsum(f) / SR
+    a, b = skew
+    env = u**a * (1 - u) ** b
+    env /= env.max()
+    # A 4 ms raised-cosine onset: a steep attack on a pure tone clicks.
+    n = int(0.004 * SR)
+    env[:n] *= np.sin(np.linspace(0, np.pi / 2, n)) ** 2
+    # Mostly a pure whistle, with a faint second harmonic for body.
+    return env * (np.sin(phase) + 0.06 * np.sin(2 * phase))
 
+
+def birds(rng):
+    """A small songbird: two bright chirps, a quick trill and a rising whistle, then a softer reply."""
+    out = np.zeros(int(2.0 * SR))
+    tsip = [(0.0, 4000), (0.15, 5600), (1.0, 3400)]
+    place(out, 0.85 * syllable(tsip, 0.075), 0.00)
+    place(out, 1.00 * syllable(tsip, 0.075), 0.13)
+    for i in range(6):
+        drop = 0.985**i  # each trill note starts a little lower
+        jitter = rng.uniform(0.97, 1.03)  # and not quite evenly, like a real bird
+        note = syllable([(0.0, 4800 * drop * jitter), (1.0, 3600 * drop)], 0.038, warble=0.012, skew=(0.8, 1.2))
+        place(out, (0.8 - 0.04 * i) * note, 0.34 + 0.052 * i)
+    place(out, 0.8 * syllable([(0.0, 2900), (0.7, 4400), (1.0, 4700)], 0.14, skew=(1.0, 1.5)), 0.72)
+    # A second bird answers from further away: lower, quieter, with a little room on it.
+    # (Only a little: the comb reverb rings metallically on pure tones.)
+    reply = np.zeros_like(out)
+    place(reply, syllable([(p, f * 0.86) for p, f in tsip], 0.07), 1.05)
+    place(reply, syllable([(p, f * 0.86) for p, f in tsip], 0.07), 1.17)
+    out += 0.32 * reverb(reply, 0.12, size=0.8)
+    # Birdsong sits where phone speakers (and ears) are most sensitive, so leave it a little lower than the bell.
+    return finish(out, peak_db=-3.0, fade=0.1)
+
+
+def seeded(seed, skip=0):
+    rng = np.random.default_rng(seed)
+    rng.uniform(size=skip)
+    return rng
+
+
+SOUNDS = [
+    # (file, recipe, random generator, Vorbis compression level: 0 = best, None = libsndfile's default)
+    # The bell once followed a chime that used the first 15 draws; skipping them keeps it identical.
+    ("reminder_bell", bell, seeded(7, skip=15), None),
+    # Pure whistles need more bits: at the default level the codec error is only 15 dB down.
+    ("reminder_birds", birds, seeded(11), 0.2),
+]
 
 if __name__ == "__main__":
     OUT.mkdir(parents=True, exist_ok=True)
-    for name, make in [("reminder_chime", chime), ("reminder_bell", bell), ("reminder_harp", harp)]:
-        audio = make()
+    for name, make, rng, level in SOUNDS:
+        audio = make(rng)
         path = OUT / f"{name}.ogg"
-        sf.write(path, audio.astype(np.float32), SR, format="OGG", subtype="VORBIS")
+        quality = {} if level is None else {"compression_level": level}
+        sf.write(path, audio.astype(np.float32), SR, format="OGG", subtype="VORBIS", **quality)
         rms = 20 * np.log10(np.sqrt(np.mean(audio[: SR // 2] ** 2)))
         print(f"{path.name}: {len(audio) / SR:.2f} s, first-half-second RMS {rms:.1f} dBFS, {path.stat().st_size // 1024} KB")

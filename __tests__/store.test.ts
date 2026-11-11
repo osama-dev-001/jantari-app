@@ -59,18 +59,26 @@ describe('settings', () => {
     expect(s.reminders.morning || s.reminders.evening || s.reminders.prayerAlerts).toBe(false);
   });
 
-  it('gives reminders the app chime unless another sound was chosen', async () => {
+  it('gives reminders the app bell unless another sound was chosen', async () => {
     const { AsyncStorage, settings } = fresh();
     await AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { morning: true } }));
-    expect((await settings.settingsStore.load()).reminders.sound).toBe('chime');
+    expect((await settings.settingsStore.load()).reminders.sound).toBe('bell');
 
     const again = fresh();
-    await again.AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { sound: 'system' } }));
-    expect((await again.settings.settingsStore.load()).reminders.sound).toBe('system');
+    await again.AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { sound: 'birds' } }));
+    expect((await again.settings.settingsStore.load()).reminders.sound).toBe('birds');
 
     const junk = fresh();
     await junk.AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { sound: 'trumpet' } }));
-    expect((await junk.settings.settingsStore.load()).reminders.sound).toBe('chime');
+    expect((await junk.settings.settingsStore.load()).reminders.sound).toBe('bell');
+  });
+
+  it('moves users of a retired sound (chime, harp) to the bell', async () => {
+    for (const sound of ['chime', 'harp']) {
+      const { AsyncStorage, settings } = fresh();
+      await AsyncStorage.setItem('v2:settings', JSON.stringify({ reminders: { sound } }));
+      expect((await settings.settingsStore.load()).reminders.sound).toBe('bell');
+    }
   });
 
   it('survives unparseable JSON', async () => {
@@ -129,15 +137,5 @@ describe('prayer tracker', () => {
     expect(progress.trackerStore.get()['2026-10-14']).toEqual(['fajr', 'isha']);
     progress.togglePrayed(TODAY, '2026-10-14', 'fajr');
     expect(progress.trackerStore.get()['2026-10-14']).toEqual(['isha']);
-  });
-
-  it('computes the streak of complete days', () => {
-    const { progress } = fresh();
-    const all = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
-    const log = { '2026-10-12': [...all], '2026-10-13': [...all], '2026-10-14': ['fajr' as const] };
-    // Today is incomplete, so it doesn't break the streak — it just doesn't count yet.
-    expect(progress.trackerStreak(log, TODAY)).toBe(2);
-    expect(progress.trackerStreak({ ...log, '2026-10-14': [...all] }, TODAY)).toBe(3);
-    expect(progress.trackerStreak({ '2026-10-12': [...all] }, TODAY)).toBe(0);
   });
 });

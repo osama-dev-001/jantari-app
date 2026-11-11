@@ -103,7 +103,7 @@ function CounterView({ items, initialId }: { items: Dhikr[]; initialId: string }
 
         <ScrollView contentContainerStyle={{ paddingHorizontal: GUTTER, paddingBottom: 20 }} showsVerticalScrollIndicator={false}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12, marginTop: 4, flexWrap: 'wrap' }}>
-            <Pill tone="gold" label={TIME_META[item.time].label} />
+            <Pill color={c.dhikrTime[item.time]} label={TIME_META[item.time].label} />
             {item.source && <Pill label={item.source} />}
             <View style={{ flex: 1 }} />
             <PressableScale

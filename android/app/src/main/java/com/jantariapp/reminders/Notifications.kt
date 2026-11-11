@@ -22,8 +22,10 @@ object Notifications {
 
   /** The phone's own notification sound. Uses the original channel ids, so existing installs keep theirs. */
   const val SOUND_SYSTEM = "system"
-  const val DEFAULT_SOUND = "chime"
-  private val SOUNDS = mapOf("chime" to R.raw.reminder_chime, "bell" to R.raw.reminder_bell, "harp" to R.raw.reminder_harp)
+  const val DEFAULT_SOUND = "bell"
+  private val SOUNDS = mapOf("bell" to R.raw.reminder_bell, "birds" to R.raw.reminder_birds)
+  /** Sounds that were dropped; their channels are still deleted on phones that had them. */
+  private val RETIRED_SOUNDS = listOf("chime", "harp")
 
   val AUDIO: AudioAttributes =
     AudioAttributes.Builder()
@@ -61,7 +63,7 @@ object Notifications {
     create(CHANNEL_PRAYER, "Prayer times", NotificationManager.IMPORTANCE_HIGH, "An alert when each prayer time begins")
 
     // Only the chosen sound's channels stay listed in the phone's settings.
-    for (other in SOUNDS.keys + SOUND_SYSTEM) {
+    for (other in SOUNDS.keys + RETIRED_SOUNDS + SOUND_SYSTEM) {
       if (other == sound) continue
       for (base in CHANNELS) {
         val id = channelId(base, other)

@@ -4,12 +4,12 @@ import { StyleSheet, View } from 'react-native';
 import { periodProgress } from '../../core/prayer/engine';
 import { FARD, PRAYER_META, type PrayerKey } from '../../core/prayer/types';
 import { formatHijri, formatHijriUrdu, isRamadan, notableDay } from '../../core/hijri';
-import { formatClock, formatCountdown, formatLongDate, ymdKey, type YMD } from '../../core/time';
+import { formatClock, formatCountdown, formatLongDate, type YMD } from '../../core/time';
 import { TIME_META, type DhikrTime } from '../../data/adhkar';
 import { useAdhkarLibrary } from '../../store/adhkarLibrary';
 import { haptics, hijriNow, useCityToday, useFocusedNow, usePrayerState } from '../../hooks';
 import type { RootNav } from '../../app/navigation';
-import { countPrayed, isPrayed, lastNDays, togglePrayed, trackerStreak, useDhikrDay, useTasbih, useTracker } from '../../store/progress';
+import { countPrayed, isPrayed, togglePrayed, useDhikrDay, useTasbih, useTracker } from '../../store/progress';
 import { updateSettings, useSettings } from '../../store/settings';
 import { useScripts, useTheme } from '../../theme/ThemeProvider';
 import { enableReminders } from '../settings/RemindersScreen';
@@ -45,17 +45,12 @@ export function TodayScreen() {
 
   return (
     <Screen>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginTop: 4 }}>
-        <View style={{ flex: 1 }}>
-          <AppText style={[scripts.arabic(26, { label: true, align: 'left' }), { color: c.gold }]}>السَّلَامُ عَلَيْكُمْ</AppText>
-          <AppText variant="caption" tone="muted" style={{ marginTop: -2 }}>
-            Assalamu Alaikum
-          </AppText>
-        </View>
+      {/* Own row: long names (Thiruvananthapuram) don't fit beside the date. */}
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 4 }}>
         <CityPill city={city} />
       </View>
 
-      <View style={{ marginTop: 14, marginBottom: 16 }}>
+      <View style={{ marginTop: 6, marginBottom: 16 }}>
         <AppText variant="heading">{formatLongDate(state.today)}</AppText>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
           <AppText variant="label" tone="secondary">
@@ -77,7 +72,7 @@ export function TodayScreen() {
 
       <PrayerTracker now={now} today={today} fmt={fmt} />
 
-      <FastingCard ramadan={isRamadan(hijri)} now={now} fmt={fmt} />
+      {isRamadan(hijri) && <FastingCard now={now} fmt={fmt} />}
 
       <ReminderPrompt onCustomise={() => nav.navigate('Reminders')} />
 
@@ -155,8 +150,6 @@ function PrayerTracker({ now, today, fmt }: { now: number; today: { ymd: YMD; ke
   const log = useTracker();
   const prayedToday = log[today.key];
   const done = countPrayed(prayedToday);
-  const streak = trackerStreak(log, today.ymd);
-  const week = lastNDays(today.ymd, 7);
 
   return (
     <Card style={{ padding: 16, marginBottom: 14 }}>
@@ -210,32 +203,14 @@ function PrayerTracker({ now, today, fmt }: { now: number; today: { ymd: YMD; ke
           );
         })}
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 }}>
-        <View style={{ flexDirection: 'row', gap: 5 }}>
-          {week.map(day => {
-            const n = countPrayed(log[ymdKey(day)]);
-            return (
-              <View
-                key={ymdKey(day)}
-                style={{ width: 22, height: 6, borderRadius: 3, backgroundColor: n === 5 ? c.accent : n > 0 ? c.accentLine : c.surfaceSunk }}
-              />
-            );
-          })}
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-          <Icon name="flame" size={14} color={streak > 0 ? c.gold : c.textFaint} />
-          <AppText variant="caption" tone={streak > 0 ? 'gold' : 'faint'}>
-            {streak > 0 ? `${streak}-day streak` : 'Last 7 days'}
-          </AppText>
-        </View>
-      </View>
     </Card>
   );
 }
 
 // ─── Fasting ─────────────────────────────────────────────────────────────────
 
-function FastingCard({ ramadan, now, fmt }: { ramadan: boolean; now: number; fmt: (t: number) => string }) {
+/** Shown only during Ramadan. */
+function FastingCard({ now, fmt }: { now: number; fmt: (t: number) => string }) {
   const c = useTheme();
   const scripts = useScripts();
   const { state } = usePrayerState(now);
@@ -248,10 +223,10 @@ function FastingCard({ ramadan, now, fmt }: { ramadan: boolean; now: number; fmt
     ['Iftar', 'افطار', iftar, 'sunset'],
   ];
   return (
-    <Card style={{ padding: 16, marginBottom: 14, borderColor: ramadan ? c.goldSoft : c.line }}>
+    <Card style={{ padding: 16, marginBottom: 14, borderColor: c.goldSoft }}>
       <SectionHeader
-        title={ramadan ? 'Ramadan fasting' : 'Fasting times'}
-        right={ramadan && fasting ? <Pill tone="gold" label={`Iftar in ${formatCountdown(iftar - now).replace(/ \d+s$/, '')}`} /> : undefined}
+        title="Ramadan fasting"
+        right={fasting ? <Pill tone="gold" label={`Iftar in ${formatCountdown(iftar - now).replace(/ \d+s$/, '')}`} /> : undefined}
       />
       <View style={{ flexDirection: 'row', gap: 12 }}>
         {items.map(([label, ur, at, icon]) => (

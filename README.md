@@ -7,10 +7,11 @@ English throughout. No internet needed.
 ## Features
 
 - **Today** — next prayer with a live countdown, Hijri date (Urdu + English, advances
-  at Maghrib), a five-salah tracker with streak, Sehri/Iftar times, adhkar progress.
+  at Maghrib), a five-salah tracker, Sehri/Iftar times in Ramadan, adhkar progress.
 - **Prayer** — daily schedule (browse any day), Qibla bearing and distance, and the
   **Yearly Jantari** table (ALL / Q1–Q4, jumps to today).
-- **Dhikr** — curated favourites plus more adhkar, grouped by time of day; a counter
+- **Dhikr** — curated favourites plus more adhkar, grouped by time of day (finished and
+  out-of-time groups fold away); a counter
   with a tasbih-bead ring, multi-part counts (33·33·34), swipe between adhkar,
   translation and hadith/virtue in Urdu, Hindi or English. Plus a free tasbih counter.
 - **Cities** — Varanasi and Ahmedabad use curated local-mosque timetables; ~60 more

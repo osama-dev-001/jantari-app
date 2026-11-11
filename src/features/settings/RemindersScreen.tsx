@@ -25,9 +25,8 @@ import { AppText, Divider, PressableScale } from '../../ui/primitives';
 import { Block, ChoiceRow, Row, SubScreen, ToggleRow } from './parts';
 
 const SOUND_META: Record<ReminderSound, { name: string; note: string }> = {
-  chime: { name: 'Chime', note: 'Three soft rising notes' },
   bell: { name: 'Bell', note: 'A single warm bell' },
-  harp: { name: 'Harp', note: 'A quick plucked arpeggio' },
+  birds: { name: 'Birdsong', note: 'A few soft bird chirps' },
   system: { name: 'Phone default', note: "Your phone's notification sound" },
 };
 

@@ -77,11 +77,21 @@ only `select` active rows. `npm run export:adhkar` regenerates `supabase/seed/*`
   `adhkar_ending` (high), `prayer` (high). One notification slot per window per day, so reminders
   replace each other. Taps deep-link to `islamicdaily://dhikr` / `islamicdaily://today`.
 - Reminders are **off by default**; turning one on requests `POST_NOTIFICATIONS` (Android 13+).
-- **Sound** (`reminders.sound`, default `chime`): Chime / Bell / Harp from `res/raw/reminder_*.ogg`,
+- **Sound** (`reminders.sound`, default `bell`): Bell / Birdsong from `res/raw/reminder_*.ogg`,
   or the phone's default. Android fixes a channel's sound at creation, so each sound has its own
-  channels (`adhkar.chime`, `prayer.bell`, …; the phone default keeps the original ids) and the
+  channels (`adhkar.bell`, `prayer.birds`, …; the phone default keeps the original ids) and the
   others are deleted. Plans keep the base channel name; the sound picked at post time chooses the
   real channel. The sounds are synthesised by `scripts/make-reminder-sounds.py` (no licence terms).
+  Chime and Harp were dropped in v2.2: a saved `chime`/`harp` loads as the bell, and their channels
+  are still deleted (`RETIRED_SOUNDS` in `Notifications.kt`).
+
+## Dhikr list
+
+Groups are ordered Morning → Any time → Evening → After Salah (`TIME_META.order`; also the
+counter's swipe order). Each time has its own tint (`palette.dhikrTime`) for the group icon and the
+counter's label. Groups fold on tap; by default a finished group starts folded, and so does the
+morning group from Asr to midnight and the evening group from midnight to Asr. A tap overrides the
+default until the next half-day.
 
 ## Fonts
 
@@ -115,6 +125,9 @@ The RemoteViews layout rules learned on devices are listed at the top of `Prayer
   the first tap after the keyboard opens only dismisses it — the city picker is a screen.
 - **Fonts**: family = file name in `android/app/src/main/assets/fonts`; never use
   `fontWeight` with them.
+- **Nastaliq re-coloured in place** (a live theme switch) can drop its last word: the old
+  measured width no longer fits at draw time. Key such labels by theme so they remount
+  (Dhikr group headers do this for کسی بھی وقت).
 - **PressableScale** splits styles: placement on the animated outer view, visuals on an inner
   view; percentage sizes stay on the outer one only. Pass `fill` when the parent stretches it.
 

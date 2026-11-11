@@ -117,22 +117,6 @@ export function togglePrayed(today: YMD, dayKey: string, key: PrayerKey) {
   });
 }
 
-/** Consecutive days with all five prayers marked, counting back from today (today counts only if complete). */
-export function trackerStreak(log: TrackerLog, today: YMD): number {
-  let streak = 0;
-  let day = today;
-  if (countPrayed(log[ymdKey(day)]) < 5) day = addDays(day, -1);
-  while (countPrayed(log[ymdKey(day)]) === 5) {
-    streak++;
-    day = addDays(day, -1);
-  }
-  return streak;
-}
-
-export function lastNDays(today: YMD, n: number): YMD[] {
-  return Array.from({ length: n }, (_, i) => addDays(today, i - n + 1));
-}
-
 
 // ─── Free tasbih counter ─────────────────────────────────────────────────────
 

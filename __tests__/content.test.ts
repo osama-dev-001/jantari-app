@@ -43,7 +43,7 @@ describe('adhkar data', () => {
   });
 
   it('groups by time of day in a stable order', () => {
-    expect(groupByTime(FAVOURITES).map(g => g.time)).toEqual(['morning', 'evening', 'any']);
+    expect(groupByTime(FAVOURITES).map(g => g.time)).toEqual(['morning', 'any', 'evening']);
     expect(groupByTime(OTHERS).map(g => g.time)).toEqual(['morning', 'evening', 'salah']);
   });
 });

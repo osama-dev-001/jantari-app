@@ -12,7 +12,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useTheme } from '../theme/ThemeProvider';
-import type { Palette } from '../theme/palette';
+import { alpha, type Palette } from '../theme/palette';
 import { RADIUS, TYPE, type TextVariant } from '../theme/typography';
 
 // ─── Text ────────────────────────────────────────────────────────────────────
@@ -196,15 +196,18 @@ export function Segmented<K extends string>({
 export function Pill({
   label,
   tone = 'neutral',
+  color,
   style,
 }: {
   label: string;
   tone?: 'neutral' | 'accent' | 'gold' | 'positive';
+  /** A custom hex colour (text + soft background); overrides `tone`. */
+  color?: string;
   style?: StyleProp<ViewStyle>;
 }) {
   const c = useTheme();
-  const bg = { neutral: c.surfaceSunk, accent: c.accentSoft, gold: c.goldSoft, positive: c.accentSoft }[tone];
-  const fg = { neutral: c.textMuted, accent: c.accent, gold: c.gold, positive: c.positive }[tone];
+  const bg = color ? alpha(color, c.isDark ? 0.14 : 0.11) : { neutral: c.surfaceSunk, accent: c.accentSoft, gold: c.goldSoft, positive: c.accentSoft }[tone];
+  const fg = color ?? { neutral: c.textMuted, accent: c.accent, gold: c.gold, positive: c.positive }[tone];
   return (
     <View style={[{ backgroundColor: bg, borderRadius: RADIUS.pill, paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' }, style]}>
       <AppText variant="overline" color={fg} style={{ fontSize: 9.5, letterSpacing: 1 }}>

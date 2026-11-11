@@ -27,6 +27,8 @@ export type Palette = {
   accentLine: string;
   onAccent: string;
   hero: { from: string; to: string; text: string; sub: string; gold: string; ornament: string; track: string };
+  /** Adhkar time-of-day tints (keys match DhikrTime): sunrise, daylight sky, dusk, mosque green. */
+  dhikrTime: { morning: string; any: string; evening: string; salah: string };
   tabBar: string;
   statusBar: 'light-content' | 'dark-content';
 };
@@ -98,6 +100,7 @@ export function buildPalette(isDark: boolean, accentKey: Accent): Palette {
         ornament: 'rgba(233, 200, 127, 0.16)',
         track: 'rgba(241, 238, 230, 0.12)',
       },
+      dhikrTime: { morning: '#F4A274', any: '#7EC4E8', evening: '#B4A5F6', salah: '#6FD3A4' },
       tabBar: '#0F1715',
       statusBar: 'light-content',
     };
@@ -133,6 +136,7 @@ export function buildPalette(isDark: boolean, accentKey: Accent): Palette {
       ornament: 'rgba(242, 210, 142, 0.2)',
       track: 'rgba(255, 251, 242, 0.2)',
     },
+    dhikrTime: { morning: '#A84A18', any: '#1D6A93', evening: '#5E40BF', salah: '#1A7A50' },
     tabBar: '#FFFCF6',
     statusBar: 'dark-content',
   };
